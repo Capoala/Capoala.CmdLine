@@ -1,2 +1,2 @@
 # Capoala.CmdLine
-A cross-platform, fluid, command line management framework.
+A cross-platform command line management framework.
