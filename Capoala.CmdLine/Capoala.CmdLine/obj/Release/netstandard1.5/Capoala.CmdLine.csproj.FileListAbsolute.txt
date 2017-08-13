@@ -1,0 +1,8 @@
+C:\.Zero Dawn\Capoala.CmdLine\Capoala.CmdLine\bin\Release\netstandard1.5\Capoala.CmdLine.deps.json
+C:\.Zero Dawn\Capoala.CmdLine\Capoala.CmdLine\bin\Release\netstandard1.5\Capoala.CmdLine.xml
+C:\.Zero Dawn\Capoala.CmdLine\Capoala.CmdLine\bin\Release\netstandard1.5\Capoala.CmdLine.dll
+C:\.Zero Dawn\Capoala.CmdLine\Capoala.CmdLine\bin\Release\netstandard1.5\Capoala.CmdLine.pdb
+C:\.Zero Dawn\Capoala.CmdLine\Capoala.CmdLine\obj\Release\netstandard1.5\Capoala.CmdLine.csprojResolveAssemblyReference.cache
+C:\.Zero Dawn\Capoala.CmdLine\Capoala.CmdLine\obj\Release\netstandard1.5\Capoala.CmdLine.AssemblyInfo.cs
+C:\.Zero Dawn\Capoala.CmdLine\Capoala.CmdLine\obj\Release\netstandard1.5\Capoala.CmdLine.dll
+C:\.Zero Dawn\Capoala.CmdLine\Capoala.CmdLine\obj\Release\netstandard1.5\Capoala.CmdLine.pdb

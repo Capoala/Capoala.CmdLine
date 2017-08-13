@@ -1,0 +1,867 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Capoala.CmdLine</name>
+    </assembly>
+    <members>
+        <member name="T:Capoala.CmdLine.ICommandLineSpecification">
+            <summary>
+            Represents the characteristics of a command line argument.
+            </summary>
+            <remarks>
+            The <see cref="T:Capoala.CmdLine.ICommandLineSpecification"/> interface defines the characteristics of a command line argument, such as its delimiter and hierarchal order.
+            </remarks>
+        </member>
+        <member name="P:Capoala.CmdLine.ICommandLineSpecification.Hierarchy">
+            <summary>
+            Represents the hierarchal position in a parent-child relationship.
+            Lower numbers represent a parent to a higher numbered child.
+            </summary>
+        </member>
+        <member name="P:Capoala.CmdLine.ICommandLineSpecification.Delimiter">
+            <summary>
+            Represent the delimiter used for a command (switch).
+            </summary>
+        </member>
+        <member name="T:Capoala.CmdLine.ICommandLineArgument">
+            <summary>
+            Represents a command line argument.
+            </summary>
+        </member>
+        <member name="P:Capoala.CmdLine.ICommandLineArgument.Command">
+            <summary>
+            The command - switch - value used at the command line.
+            <para>
+            This property will always return the <see cref="P:Capoala.CmdLine.ICommandLineArgument.Specification"/>.Delimiter.
+            </para>
+            </summary>
+        </member>
+        <member name="P:Capoala.CmdLine.ICommandLineArgument.Description">
+            <summary>
+            A description of what this argument represents or does within the scope of the application.
+            </summary>
+        </member>
+        <member name="P:Capoala.CmdLine.ICommandLineArgument.Specification">
+            <summary>
+            TThe <see cref="T:Capoala.CmdLine.ICommandLineSpecification"/> used to define this argument's characteristics.
+            </summary>
+        </member>
+        <member name="T:Capoala.CmdLine.ICommandLineGrouping">
+            <summary>
+            Represents a paired grouping between a parent chain and its associated child arguments.
+            <para>
+            *See remarks for further details and correct implementation.
+            </para>
+            </summary>
+            <remarks>
+            The <see cref="P:Capoala.CmdLine.ICommandLineGrouping.ParentCallChain"/> property represents the full parent hierarchy chain. 
+            
+            The <see cref="P:Capoala.CmdLine.ICommandLineGrouping.Children"/> property represents associated child pairings. 
+            It is important to note this property is not an "all inclusive" listing", but rather an individual grouping. 
+            This means that if you have one "main argument", which has three "child arguments", then specifying a grouping
+            with "main" and "childOne" would transpose to the command line as "$ main childOne". 
+            
+            If you wanted to specify a grouping that states "main" must run with "childOne" and "childTwo", but leave "childThree" as optional, 
+            then you would create two groupings; one with "childOne" and "childTwo"; the other, with "childOne", "childTwo", and "childThree".
+            </remarks>
+        </member>
+        <member name="P:Capoala.CmdLine.ICommandLineGrouping.ParentCallChain">
+            <summary>
+            The parent call-chain.
+            </summary>
+        </member>
+        <member name="P:Capoala.CmdLine.ICommandLineGrouping.Children">
+            <summary>
+            The associated - legal - children in relation to <see cref="P:Capoala.CmdLine.ICommandLineGrouping.ParentCallChain"/>.
+            </summary>
+        </member>
+        <member name="T:Capoala.CmdLine.ICommandLineRestriction`1">
+            <summary>
+            Represents a command line restrictions.
+            </summary>
+            <typeparam name="T">The object type to return should a violation occur.</typeparam>
+        </member>
+        <member name="P:Capoala.CmdLine.ICommandLineRestriction`1.IsViolated">
+            <summary>
+            Determines if a violation has occurred.
+            </summary>
+        </member>
+        <member name="M:Capoala.CmdLine.ICommandLineRestriction`1.GetViolations">
+            <summary>
+            Performs all necessary queries to determine whether any violations were found, returning all violation objects as <typeparamref name="T"/>.
+            </summary>
+            <returns>
+            Returns a collection of <typeparamref name="T"/> representing the violations, if any violations where found.
+            Returns an empty collection if no violations were found.
+            </returns>
+        </member>
+        <member name="T:Capoala.CmdLine.CommandLineViolation">
+            <summary>
+            Represents a violation.
+            </summary>
+        </member>
+        <member name="P:Capoala.CmdLine.CommandLineViolation.Violation">
+            <summary>
+            The violation.
+            </summary>
+        </member>
+        <member name="P:Capoala.CmdLine.CommandLineViolation.Message">
+            <summary>
+            The message.
+            </summary>
+        </member>
+        <member name="M:Capoala.CmdLine.CommandLineViolation.#ctor(System.String,System.String)">
+            <summary>
+            Creates a new <see cref="T:Capoala.CmdLine.CommandLineViolation"/>.
+            </summary>
+            <param name="violation">The violation.</param>
+            <param name="message">The message.</param>
+        </member>
+        <member name="T:Capoala.CmdLine.CommandLineSpecification">
+            <summary>
+            A default implementation of <see cref="T:Capoala.CmdLine.ICommandLineSpecification"/>. This class cannot be inherited.
+            <para>
+            To implement a new <see cref="T:Capoala.CmdLine.ICommandLineSpecification"/> implementation, inherit from <see cref="T:Capoala.CmdLine.CommandLine.BaseImplementations.CommandLineSpecificationBase"/>.
+            </para>
+            </summary>
+        </member>
+        <member name="M:Capoala.CmdLine.CommandLineSpecification.#ctor(System.Int32,System.Char)">
+            <summary>
+            Creates new instance of <see cref="T:Capoala.CmdLine.CommandLineSpecification"/>.
+            </summary>
+            <param name="hierarchy">The hierarchal position in a parent-child relationship.</param>
+            <param name="delimiter">The delimiter used for a command (switch).</param>
+            <exception cref="T:System.ArgumentException">
+            Throws when <paramref name="delimiter"/> is not supported.
+            </exception>
+            <exception cref="T:System.ArgumentException">
+            Throws when this could not be added to <see cref="F:Capoala.CmdLine.CommandLine._knownSpecifications"/>.
+            </exception>
+        </member>
+        <member name="T:Capoala.CmdLine.CommandLineArgument">
+            <summary>
+            A default implementation of <see cref="T:Capoala.CmdLine.ICommandLineArgument"/>. This class cannot be inherited.
+            <para>
+            To implement a new <see cref="T:Capoala.CmdLine.ICommandLineArgument"/> implementation, inherit from <see cref="T:Capoala.CmdLine.CommandLine.BaseImplementations.CommandLineArgumentBase"/>.
+            </para>
+            </summary>
+        </member>
+        <member name="M:Capoala.CmdLine.CommandLineArgument.#ctor(System.String,Capoala.CmdLine.ICommandLineSpecification,System.String)">
+            <summary>
+            Creates new instance of <see cref="T:Capoala.CmdLine.CommandLineArgument"/>.
+            </summary>
+            <param name="command">The command - switch - value used at the command line.</param>
+            <param name="specification">The <see cref="T:Capoala.CmdLine.ICommandLineSpecification"/> used to define this argument's characteristics.</param>
+            <param name="description">A description of what this argument represents or does within the scope of the application.</param>
+            <exception cref="T:System.ArgumentNullException">
+            Throws when <paramref name="command"/> is null, empty, or only whitespace.
+            </exception>
+            <exception cref="T:System.ArgumentNullException">
+            Throws when <paramref name="specification"/> is null.
+            </exception>
+            <exception cref="T:System.ArgumentException">
+            Throws when this could not be added to <see cref="F:Capoala.CmdLine.CommandLine._knownArguments"/>.
+            </exception>
+            <exception cref="T:System.ArgumentException">
+            Throws when <paramref name="specification"/> could not be added to <see cref="F:Capoala.CmdLine.CommandLine._knownSpecifications"/>.
+            </exception>
+        </member>
+        <member name="T:Capoala.CmdLine.CommandLineGrouping">
+            <summary>
+            A default implementation of <see cref="T:Capoala.CmdLine.ICommandLineGrouping"/>. This class cannot be inherited.
+            <para>
+            To implement a new <see cref="T:Capoala.CmdLine.ICommandLineGrouping"/> implementation, inherit from <see cref="T:Capoala.CmdLine.CommandLine.BaseImplementations.CommandLineGroupingBase"/>.
+            </para>
+            </summary>
+        </member>
+        <member name="M:Capoala.CmdLine.CommandLineGrouping.#ctor(Capoala.CmdLine.ICommandLineArgument,Capoala.CmdLine.ICommandLineArgument[])">
+            <summary>
+            Creates new instance of <see cref="T:Capoala.CmdLine.CommandLineGrouping"/>.
+            </summary>
+            <param name="parentCallChain">The parent call-chain.</param>
+            <param name="children">The associated - legal - children in relation to <paramref name="parentCallChain"/>.</param>
+            <exception cref="T:System.ArgumentNullException">
+            Throws when <paramref name="parentCallChain"/> is null or contains not elements.
+            </exception>
+        </member>
+        <member name="M:Capoala.CmdLine.CommandLineGrouping.#ctor(Capoala.CmdLine.ICommandLineArgument[],Capoala.CmdLine.ICommandLineArgument[])">
+            <summary>
+            Creates new instance of <see cref="T:Capoala.CmdLine.CommandLineGrouping"/>.
+            </summary>
+            <param name="parentCallChain">The parent call-chain.</param>
+            <param name="children">The associated - legal - children in relation to <paramref name="parentCallChain"/>.</param>
+            <exception cref="T:System.ArgumentNullException">
+            Throws when <paramref name="parentCallChain"/> is null or contains not elements.
+            </exception>
+        </member>
+        <member name="T:Capoala.CmdLine.CommandLine">
+            <summary>
+            Provides the means to create, retrieve, and configure command line arguments. This class cannot be inherited.
+            </summary>
+        </member>
+        <member name="F:Capoala.CmdLine.CommandLine._knownArguments">
+            <summary>
+            A collection of all instantiated <see cref="T:Capoala.CmdLine.ICommandLineArgument"/> implementations.
+            </summary>
+        </member>
+        <member name="F:Capoala.CmdLine.CommandLine._knownSpecifications">
+            <summary>
+            A collection of all instantiated <see cref="T:Capoala.CmdLine.ICommandLineSpecification"/> implementations.
+            </summary>
+        </member>
+        <member name="P:Capoala.CmdLine.CommandLine.Comparer">
+            <summary>
+            Specifies how arguments are compared to one another.
+            </summary>
+        </member>
+        <member name="P:Capoala.CmdLine.CommandLine.Arguments">
+            <summary>
+            Returns the received command line arguments, minus the path to the executing application.
+            </summary>
+        </member>
+        <member name="P:Capoala.CmdLine.CommandLine.ArgumentsString">
+            <summary>
+            Returns the received command line arguments, minus the path to the executing application.
+            </summary>
+        </member>
+        <member name="P:Capoala.CmdLine.CommandLine.KnownArguments">
+            <summary>
+            A collection of all instantiated <see cref="T:Capoala.CmdLine.ICommandLineArgument"/> implementations.
+            </summary>
+        </member>
+        <member name="P:Capoala.CmdLine.CommandLine.KnownSpecifications">
+            <summary>
+            A collection of all instantiated <see cref="T:Capoala.CmdLine.ICommandLineSpecification"/> implementations.
+            </summary>
+        </member>
+        <member name="P:Capoala.CmdLine.CommandLine.RootHierarchy">
+            <summary>
+            Returns the lowest <see cref="P:Capoala.CmdLine.ICommandLineSpecification.Hierarchy"/> from the <see cref="P:Capoala.CmdLine.CommandLine.KnownSpecifications"/> collection.
+            </summary>
+        </member>
+        <member name="P:Capoala.CmdLine.CommandLine.RootSpecification">
+            <summary>
+            Returns the <see cref="T:Capoala.CmdLine.ICommandLineSpecification"/> with the lowest <see cref="P:Capoala.CmdLine.ICommandLineSpecification.Hierarchy"/> from the <see cref="P:Capoala.CmdLine.CommandLine.KnownSpecifications"/> collection.
+            </summary>
+        </member>
+        <member name="M:Capoala.CmdLine.CommandLine.GetSegment(Capoala.CmdLine.ICommandLineArgument,System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            Returns a collection of values starting at <paramref name="argument"/>, and ending at the next value that begins with the first character of <paramref name="argument"/>.
+            </summary>
+            <param name="argument">The argument to search for.</param>
+            <param name="collectionToSearch">The collection to search in. Specifying null will default to <see cref="P:Capoala.CmdLine.CommandLine.Arguments"/>.</param>
+            <returns>
+            Returns all child <see cref="P:Capoala.CmdLine.ICommandLineArgument.Command"/> and parameters based upon the <see cref="T:Capoala.CmdLine.ICommandLineSpecification"/> if <paramref name="argument"/> is found.
+            Returns an empty collection if <paramref name="argument"/> is not found.
+            </returns>
+            <remarks>
+            This method searches <paramref name="collectionToSearch"/> for a value that matches <paramref name="argument"/> using the <see cref="P:Capoala.CmdLine.CommandLine.Comparer"/> value.
+            Once found, that value and all proceeding values are returned until a value whose first character matches that of the <paramref name="argument"/>'s delimiter.
+            
+            If <paramref name="collectionToSearch"/> is null, <see cref="P:Capoala.CmdLine.CommandLine.Arguments"/> is used.
+            
+            If no matches to <paramref name="argument"/> are found, an empty collection is returned.
+            </remarks>
+        </member>
+        <member name="M:Capoala.CmdLine.CommandLine.GetSegment(System.Collections.Generic.IEnumerable{Capoala.CmdLine.ICommandLineArgument},System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            Returns a collection of child arguments and parameters of the given call-chain.
+            </summary>
+            <param name="callChain">The call-chain.</param>
+            <param name="collectionToSearch">The collection to search. Specifying null will default to <see cref="P:Capoala.CmdLine.CommandLine.Arguments"/>.</param>
+            <returns>
+            Returns all child <see cref="P:Capoala.CmdLine.ICommandLineArgument.Command"/> and parameters based upon the <see cref="T:Capoala.CmdLine.ICommandLineSpecification"/> if <paramref name="callChain"/> is found.
+            Returns an empty collection if <paramref name="callChain"/> is not found.
+            </returns>
+            <remarks>
+            This method searches <paramref name="collectionToSearch"/> for a value that matches <paramref name="callChain"/> using the <see cref="P:Capoala.CmdLine.CommandLine.Comparer"/> value.
+            Once found, that value and all proceeding values are returned until a value whose first character matches that of the <paramref name="callChain"/>'s last argument's delimiter.
+            
+            If <paramref name="collectionToSearch"/> is null, <see cref="P:Capoala.CmdLine.CommandLine.Arguments"/> is used.
+            
+            If no matches to <paramref name="callChain"/> are found, an empty collection is returned.
+            </remarks>
+        </member>
+        <member name="M:Capoala.CmdLine.CommandLine.GetSegment(Capoala.CmdLine.ICommandLineArgument[])">
+            <summary>
+            Returns a collection of child arguments and parameters of the given call-chain.
+            </summary>
+            <param name="callChain">The call-chain.</param>
+            <returns>
+            Returns all child <see cref="P:Capoala.CmdLine.ICommandLineArgument.Command"/> and parameters based upon the <see cref="T:Capoala.CmdLine.ICommandLineSpecification"/> if <paramref name="callChain"/> is found.
+            Returns an empty collection if <paramref name="callChain"/> is not found.
+            </returns>
+            <remarks>
+            This method searches <see cref="P:Capoala.CmdLine.CommandLine.Arguments"/> for a value that matches <paramref name="callChain"/> using the <see cref="P:Capoala.CmdLine.CommandLine.Comparer"/> value.
+            Once found, that value and all proceeding values are returned until a value whose first character matches that of the <paramref name="callChain"/>'s last argument's delimiter.
+            
+            If no matches to <paramref name="callChain"/> are found, an empty collection is returned.
+            </remarks>
+        </member>
+        <member name="M:Capoala.CmdLine.CommandLine.GetParams(Capoala.CmdLine.ICommandLineArgument,System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            Returns all parameters associated with the specified <see cref="T:Capoala.CmdLine.ICommandLineArgument"/>.
+            </summary>
+            <param name="argument">The argument to retrieve the parameters of.</param>
+            <param name="collectionToSearch">The collection to search. Specifying null will default to <see cref="P:Capoala.CmdLine.CommandLine.Arguments"/>.</param>
+            <returns>
+            Searches <paramref name="collectionToSearch"/> for <paramref name="argument"/>. Once found, proceeding values are returned
+            until a value begins with a known <see cref="P:Capoala.CmdLine.ICommandLineSpecification.Delimiter"/>.
+            
+            If <paramref name="argument"/> is not found, or no parameters are found, an empty collection is returned.
+            </returns>
+        </member>
+        <member name="M:Capoala.CmdLine.CommandLine.GetParams(Capoala.CmdLine.ICommandLineArgument[],System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            Returns all parameters associated with the specified call-chain.
+            </summary>
+            <param name="callChain">The call-chain to retrieve the parameters of.</param>
+            <param name="collectionToSearch">The collection to search. Specifying null will default to <see cref="P:Capoala.CmdLine.CommandLine.Arguments"/>.</param>
+            <returns>
+            Searches <paramref name="collectionToSearch"/> for <paramref name="callChain"/>. Once found, proceeding values are returned
+            until a value begins with a known <see cref="P:Capoala.CmdLine.ICommandLineSpecification.Delimiter"/>.
+            
+            If <paramref name="callChain"/> is not found, or no parameters are found, an empty collection is returned.
+            </returns>
+        </member>
+        <member name="M:Capoala.CmdLine.CommandLine.GetParams(Capoala.CmdLine.ICommandLineArgument[])">
+            <summary>
+            Returns all parameters associated with the specified call-chain.
+            </summary>
+            <param name="callChain">The call-chain to retrieve the parameters of.</param>
+            <returns>
+            Searches <see cref="P:Capoala.CmdLine.CommandLine.Arguments"/> for <paramref name="callChain"/>. Once found, proceeding values are returned
+            until a value begins with a known <see cref="P:Capoala.CmdLine.ICommandLineSpecification.Delimiter"/>.
+            
+            If <paramref name="callChain"/> is not found, or no parameters are found, an empty collection is returned.
+            </returns>
+        </member>
+        <member name="M:Capoala.CmdLine.CommandLine.ExcludeParams(System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            Returns the given collection, minus parameters.
+            </summary>
+            <param name="collectionToFilter">The collection of arguments.</param>
+            <returns>
+            Returns the given collection minus any values that do not begin with any known <see cref="T:Capoala.CmdLine.ICommandLineSpecification"/> delimiters.
+            </returns>
+        </member>
+        <member name="M:Capoala.CmdLine.CommandLine.ExcludeParams(System.Collections.Generic.IEnumerable{Capoala.CmdLine.ICommandLineArgument})">
+            <summary>
+            Returns the given collection, minus parameters.
+            </summary>
+            <param name="collectionToFilter">The collection of arguments.</param>
+            <returns>
+            Returns the given collection minus any values that do not begin with any known <see cref="T:Capoala.CmdLine.ICommandLineSpecification"/> delimiters.
+            </returns>
+        </member>
+        <member name="M:Capoala.CmdLine.CommandLine.Found(Capoala.CmdLine.ICommandLineArgument[])">
+            <summary>
+            Determines if the specified call-chain is present in the <see cref="P:Capoala.CmdLine.CommandLine.Arguments"/> collection.
+            </summary>
+            <param name="callChain">The call-chain to check.</param>
+            <returns>
+            Returns true if the call-chain is present; otherwise, returns false.
+            </returns>
+        </member>
+        <member name="M:Capoala.CmdLine.CommandLine.Found(System.Collections.Generic.IEnumerable{Capoala.CmdLine.ICommandLineArgument},System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            Determines if the specified call-chain is present the specified collection.
+            </summary>
+            <param name="callChain">The call-chain to check.</param>
+            <param name="collectionToSearch">The collection to search. Specifying null will default to <see cref="P:Capoala.CmdLine.CommandLine.Arguments"/>.</param>
+            <returns>
+            Returns true if the call-chain is present; otherwise, returns false.
+            </returns>
+        </member>
+        <member name="M:Capoala.CmdLine.CommandLine.Found(Capoala.CmdLine.ICommandLineGrouping,System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            Determines if the specified <see cref="T:Capoala.CmdLine.ICommandLineGrouping"/> is present in the specified collection.
+            </summary>
+            <param name="grouping">The <see cref="T:Capoala.CmdLine.ICommandLineGrouping"/> to evaluate.</param>
+            <param name="collectionToSearch">The collection to search. Specifying null will default to <see cref="P:Capoala.CmdLine.CommandLine.Arguments"/>.</param>
+            <returns></returns>
+        </member>
+        <member name="T:Capoala.CmdLine.CommandLine.BaseImplementations">
+            <summary>
+            Contains base interface implementations. This class cannot be inherited.
+            </summary>
+        </member>
+        <member name="T:Capoala.CmdLine.CommandLine.BaseImplementations.CommandLineSpecificationBase">
+            <summary>
+            The base implementation of <see cref="T:Capoala.CmdLine.ICommandLineSpecification"/>. This class can only be inherited.
+            </summary>
+        </member>
+        <member name="P:Capoala.CmdLine.CommandLine.BaseImplementations.CommandLineSpecificationBase.Hierarchy">
+            <summary>
+            Represents the hierarchal position in a parent-child relationship.
+            Lower numbers represent a parent to a higher numbered child.
+            </summary>
+        </member>
+        <member name="P:Capoala.CmdLine.CommandLine.BaseImplementations.CommandLineSpecificationBase.Delimiter">
+            <summary>
+            Represent the delimiter used for a command (switch).
+            </summary>
+        </member>
+        <member name="M:Capoala.CmdLine.CommandLine.BaseImplementations.CommandLineSpecificationBase.#ctor(System.Int32,System.Char)">
+            <summary>
+            Creates new instance of <see cref="T:Capoala.CmdLine.CommandLine.BaseImplementations.CommandLineSpecificationBase"/>.
+            </summary>
+            <param name="hierarchy">The hierarchal position in a parent-child relationship.</param>
+            <param name="delimiter">The delimiter used for a command (switch).</param>
+            <exception cref="T:System.ArgumentException">
+            Throws when <paramref name="delimiter"/> is not supported.
+            </exception>
+            <exception cref="T:System.ArgumentException">
+            Throws when this could not be added to <see cref="F:Capoala.CmdLine.CommandLine._knownSpecifications"/>.
+            </exception>
+        </member>
+        <member name="M:Capoala.CmdLine.CommandLine.BaseImplementations.CommandLineSpecificationBase.CompareTo(Capoala.CmdLine.ICommandLineSpecification)">
+            <summary>
+            Compares the current instance with another object of the same type and returns an integer 
+            that indicates whether the current instance precedes, follows, or occurs in the same position 
+            in the sort order as the other object.
+            </summary>
+            <param name="other">The <see cref="T:Capoala.CmdLine.ICommandLineSpecification"/> to compare to.</param>
+            <returns>
+            Returns 0 if both instance occur in the same sort order.
+            Returns 1 if <paramref name="other"/> is null or follows this instance.
+            Returns greater than zero if this instance follows <paramref name="other"/> in the sort order.
+            Returns less than zero if this instance precedes <paramref name="other"/> in the sort order.
+            </returns>
+        </member>
+        <member name="M:Capoala.CmdLine.CommandLine.BaseImplementations.CommandLineSpecificationBase.Equals(Capoala.CmdLine.ICommandLineSpecification)">
+            <summary>
+            Determines whether two specified <see cref="T:Capoala.CmdLine.ICommandLineSpecification"/> have the same value.
+            </summary>
+            <param name="other">The <see cref="T:Capoala.CmdLine.ICommandLineSpecification"/> to compare to this instance.</param>
+            <returns>
+            Returns true if both objects re the same instance or hold the same values; otherwise, returns false.
+            </returns>
+        </member>
+        <member name="M:Capoala.CmdLine.CommandLine.BaseImplementations.CommandLineSpecificationBase.Equals(System.Object)">
+            <summary>
+            Determines whether the specified object is equal to the current object.
+            </summary>
+            <param name="obj">The object to compare with the current object.</param>
+            <returns>
+            Returns true if both objects re the same instance or hold the same values; otherwise, returns false.
+            </returns>
+        </member>
+        <member name="M:Capoala.CmdLine.CommandLine.BaseImplementations.CommandLineSpecificationBase.GetHashCode">
+            <summary>
+            Serves as the default hash function. 
+            </summary>
+            <returns>
+            A hash code for the current object.
+            </returns>
+        </member>
+        <member name="M:Capoala.CmdLine.CommandLine.BaseImplementations.CommandLineSpecificationBase.ToString">
+            <summary>
+            Returns a string that represents the current object.
+            </summary>
+            <returns>
+            Returns the <see cref="P:Capoala.CmdLine.ICommandLineSpecification.Delimiter"/> value.
+            </returns>
+        </member>
+        <member name="T:Capoala.CmdLine.CommandLine.BaseImplementations.CommandLineArgumentBase">
+            <summary>
+            The base implementation of <see cref="T:Capoala.CmdLine.ICommandLineArgument"/>. This class can only be inherited.
+            </summary>
+        </member>
+        <member name="P:Capoala.CmdLine.CommandLine.BaseImplementations.CommandLineArgumentBase.Command">
+            <summary>
+            The command - switch - value used at the command line.
+            <para>
+            This property will always return the <see cref="P:Capoala.CmdLine.CommandLine.BaseImplementations.CommandLineArgumentBase.Specification"/>.Delimiter.
+            </para>
+            </summary>
+        </member>
+        <member name="P:Capoala.CmdLine.CommandLine.BaseImplementations.CommandLineArgumentBase.Description">
+            <summary>
+            A description of what this argument represents or does within the scope of the application.
+            </summary>
+        </member>
+        <member name="P:Capoala.CmdLine.CommandLine.BaseImplementations.CommandLineArgumentBase.Specification">
+            <summary>
+            TThe <see cref="T:Capoala.CmdLine.ICommandLineSpecification"/> used to define this argument's characteristics.
+            </summary>
+        </member>
+        <member name="M:Capoala.CmdLine.CommandLine.BaseImplementations.CommandLineArgumentBase.#ctor(System.String,Capoala.CmdLine.ICommandLineSpecification,System.String)">
+            <summary>
+            Creates new instance of <see cref="T:Capoala.CmdLine.CommandLine.BaseImplementations.CommandLineArgumentBase"/>.
+            </summary>
+            <param name="command">The command - switch - value used at the command line.</param>
+            <param name="specification">The <see cref="T:Capoala.CmdLine.ICommandLineSpecification"/> used to define this argument's characteristics.</param>
+            <param name="description">A description of what this argument represents or does within the scope of the application.</param>
+            <exception cref="T:System.ArgumentNullException">
+            Throws when <paramref name="command"/> is null, empty, or only whitespace.
+            </exception>
+            <exception cref="T:System.ArgumentNullException">
+            Throws when <paramref name="specification"/> is null.
+            </exception>
+            <exception cref="T:System.ArgumentException">
+            Throws when this could not be added to <see cref="F:Capoala.CmdLine.CommandLine._knownArguments"/>.
+            </exception>
+            <exception cref="T:System.ArgumentException">
+            Throws when <paramref name="specification"/> could not be added to <see cref="F:Capoala.CmdLine.CommandLine._knownSpecifications"/>.
+            </exception>
+        </member>
+        <member name="M:Capoala.CmdLine.CommandLine.BaseImplementations.CommandLineArgumentBase.CompareTo(Capoala.CmdLine.ICommandLineArgument)">
+            <summary>
+            Compares the current instance with another object of the same type and returns an integer 
+            that indicates whether the current instance precedes, follows, or occurs in the same position 
+            in the sort order as the other object.
+            </summary>
+            <param name="other">The <see cref="T:Capoala.CmdLine.ICommandLineArgument"/> to compare to.</param>
+            <returns>
+            Returns 0 if both instance occur in the same sort order.
+            Returns 1 if <paramref name="other"/> is null or follows this instance.
+            Returns greater than zero if this instance follows <paramref name="other"/> in the sort order.
+            Returns less than zero if this instance precedes <paramref name="other"/> in the sort order.
+            </returns>
+        </member>
+        <member name="M:Capoala.CmdLine.CommandLine.BaseImplementations.CommandLineArgumentBase.Equals(Capoala.CmdLine.ICommandLineArgument)">
+            <summary>
+            Determines whether two specified <see cref="T:Capoala.CmdLine.ICommandLineArgument"/> have the same value.
+            </summary>
+            <param name="other">The <see cref="T:Capoala.CmdLine.ICommandLineArgument"/> to compare to this instance.</param>
+            <returns>
+            Returns true if both objects re the same instance or hold the same values; otherwise, returns false.
+            </returns>
+        </member>
+        <member name="M:Capoala.CmdLine.CommandLine.BaseImplementations.CommandLineArgumentBase.Equals(System.Object)">
+            <summary>
+            Determines whether the specified object is equal to the current object.
+            </summary>
+            <param name="obj">The object to compare with the current object.</param>
+            <returns>
+            Returns true if both objects re the same instance or hold the same values; otherwise, returns false.
+            </returns>
+        </member>
+        <member name="M:Capoala.CmdLine.CommandLine.BaseImplementations.CommandLineArgumentBase.GetHashCode">
+            <summary>
+            Serves as the default hash function. 
+            </summary>
+            <returns>
+            A hash code for the current object.
+            </returns>
+        </member>
+        <member name="M:Capoala.CmdLine.CommandLine.BaseImplementations.CommandLineArgumentBase.ToString">
+            <summary>
+            Returns a string that represents the current object.
+            </summary>
+            <returns>
+            Returns the <see cref="P:Capoala.CmdLine.ICommandLineArgument.Command"/> value.
+            </returns>
+        </member>
+        <member name="T:Capoala.CmdLine.CommandLine.BaseImplementations.CommandLineGroupingBase">
+            <summary>
+            The base implementation of <see cref="T:Capoala.CmdLine.ICommandLineGrouping"/>. This class can only be inherited.
+            </summary>
+        </member>
+        <member name="P:Capoala.CmdLine.CommandLine.BaseImplementations.CommandLineGroupingBase.ParentCallChain">
+            <summary>
+            The parent call-chain.
+            </summary>
+        </member>
+        <member name="P:Capoala.CmdLine.CommandLine.BaseImplementations.CommandLineGroupingBase.Children">
+            <summary>
+            The associated - legal - children in relation to <see cref="P:Capoala.CmdLine.CommandLine.BaseImplementations.CommandLineGroupingBase.ParentCallChain"/>.
+            </summary>
+        </member>
+        <member name="M:Capoala.CmdLine.CommandLine.BaseImplementations.CommandLineGroupingBase.#ctor(Capoala.CmdLine.ICommandLineArgument,Capoala.CmdLine.ICommandLineArgument[])">
+            <summary>
+            Creates new instance of <see cref="T:Capoala.CmdLine.CommandLine.BaseImplementations.CommandLineGroupingBase"/>.
+            <para>
+            *See remarks for further details and correct implementation.
+            </para>
+            </summary>
+            <param name="parentCallChain">The parent call-chain.</param>
+            <param name="children">The associated - legal - children in relation to <paramref name="parentCallChain"/>.</param>
+            <exception cref="T:System.ArgumentNullException">
+            Throws when <paramref name="parentCallChain"/> is null or contains not elements.
+            </exception>
+            <remarks>
+            The <see cref="P:Capoala.CmdLine.ICommandLineGrouping.ParentCallChain"/> property represents the full parent hierarchy chain. 
+            
+            The <see cref="P:Capoala.CmdLine.ICommandLineGrouping.Children"/> property represents associated child pairings. 
+            It is important to note this property is not an "all inclusive" listing", but rather an individual grouping. 
+            This means that if you have one "main argument", which has three "child arguments", then specifying a grouping
+            with "main" and "childOne" would transpose to the command line as "$ main childOne". 
+            
+            If you wanted to specify a grouping that states "main" must run with "childOne" and "childTwo", but leave "childThree" as optional, 
+            then you would create two groupings; one with "childOne" and "childTwo"; the other, with "childOne", "childTwo", and "childThree".
+            </remarks>
+        </member>
+        <member name="M:Capoala.CmdLine.CommandLine.BaseImplementations.CommandLineGroupingBase.#ctor(Capoala.CmdLine.ICommandLineArgument[],Capoala.CmdLine.ICommandLineArgument[])">
+            <summary>
+            Creates new instance of <see cref="T:Capoala.CmdLine.CommandLine.BaseImplementations.CommandLineGroupingBase"/>.
+            <para>
+            *See remarks for further details and correct implementation.
+            </para>
+            </summary>
+            <param name="parentCallChain">The parent call-chain.</param>
+            <param name="children">The associated - legal - children in relation to <paramref name="parentCallChain"/>.</param>
+            <exception cref="T:System.ArgumentNullException">
+            Throws when <paramref name="parentCallChain"/> is null or contains not elements.
+            </exception>
+            <remarks>
+            The <see cref="P:Capoala.CmdLine.ICommandLineGrouping.ParentCallChain"/> property represents the full parent hierarchy chain. 
+            
+            The <see cref="P:Capoala.CmdLine.ICommandLineGrouping.Children"/> property represents associated child pairings. 
+            It is important to note this property is not an "all inclusive" listing", but rather an individual grouping. 
+            This means that if you have one "main argument", which has three "child arguments", then specifying a grouping
+            with "main" and "childOne" would transpose to the command line as "$ main childOne". 
+            
+            If you wanted to specify a grouping that states "main" must run with "childOne" and "childTwo", but leave "childThree" as optional, 
+            then you would create two groupings; one with "childOne" and "childTwo"; the other, with "childOne", "childTwo", and "childThree".
+            </remarks>
+        </member>
+        <member name="M:Capoala.CmdLine.CommandLine.BaseImplementations.CommandLineGroupingBase.Equals(Capoala.CmdLine.ICommandLineGrouping)">
+            <summary>
+            Determines whether two specified <see cref="T:Capoala.CmdLine.ICommandLineGrouping"/> have the same value.
+            </summary>
+            <param name="other">The <see cref="T:Capoala.CmdLine.ICommandLineGrouping"/> to compare to this instance.</param>
+            <returns>
+            Returns true if both objects re the same instance or hold the same values; otherwise, returns false.
+            </returns>
+        </member>
+        <member name="M:Capoala.CmdLine.CommandLine.BaseImplementations.CommandLineGroupingBase.Equals(System.Object)">
+            <summary>
+            Determines whether the specified object is equal to the current object.
+            </summary>
+            <param name="obj">The object to compare with the current object.</param>
+            <returns>
+            Returns true if both objects re the same instance or hold the same values; otherwise, returns false.
+            </returns>
+        </member>
+        <member name="M:Capoala.CmdLine.CommandLine.BaseImplementations.CommandLineGroupingBase.GetHashCode">
+            <summary>
+            Serves as the default hash function. 
+            </summary>
+            <returns>
+            A hash code for the current object.
+            </returns>
+        </member>
+        <member name="M:Capoala.CmdLine.CommandLine.BaseImplementations.CommandLineGroupingBase.ToString">
+            <summary>
+            Returns a string that represents the current object.
+            </summary>
+            <returns>
+            Returns the full string value of the call-chain and children.
+            </returns>
+        </member>
+        <member name="T:Capoala.CmdLine.CommandLine.BaseImplementations.CommandLineRestrictionBase`1">
+            <summary>
+            The base implementation of <see cref="T:Capoala.CmdLine.ICommandLineRestriction`1"/>. This class can only be inherited.
+            </summary>
+            <typeparam name="T">The object type to return should a violation occur.</typeparam>
+        </member>
+        <member name="P:Capoala.CmdLine.CommandLine.BaseImplementations.CommandLineRestrictionBase`1.IsViolated">
+            <summary>
+            Determines if a violation has occurred.
+            </summary>
+        </member>
+        <member name="M:Capoala.CmdLine.CommandLine.BaseImplementations.CommandLineRestrictionBase`1.GetViolations">
+            <summary>
+            Performs all necessary queries to determine whether any violations were found, returning all violation objects as <typeparamref name="T"/>.
+            </summary>
+            <returns>
+            Returns a collection of <typeparamref name="T"/> representing the violations, if any violations where found.
+            Returns an empty collection if no violations were found.
+            </returns>
+        </member>
+        <member name="T:Capoala.CmdLine.CommandLineRestrictions">
+            <summary>
+            Contains default, common, <see cref="T:Capoala.CmdLine.ICommandLineRestriction`1"/> implementations.
+            </summary>
+        </member>
+        <member name="T:Capoala.CmdLine.CommandLineRestrictions.LegalArguments">
+            <summary>
+            A restriction which specifies legal arguments.
+            </summary>
+        </member>
+        <member name="P:Capoala.CmdLine.CommandLineRestrictions.LegalArguments.LegalCombinations">
+            <summary>
+            A collection of <see cref="T:Capoala.CmdLine.ICommandLineGrouping"/> representing legal call-chains and associated child <see cref="T:Capoala.CmdLine.ICommandLineArgument"/>.
+            </summary>
+        </member>
+        <member name="M:Capoala.CmdLine.CommandLineRestrictions.LegalArguments.#ctor(Capoala.CmdLine.ICommandLineGrouping[])">
+            <summary>
+            Creates a new instance of <see cref="T:Capoala.CmdLine.CommandLineRestrictions.LegalArguments"/>.
+            </summary>
+            <param name="legalCombinations">A collection of <see cref="T:Capoala.CmdLine.ICommandLineGrouping"/> representing legal call-chains and associated child <see cref="T:Capoala.CmdLine.ICommandLineArgument"/>.</param>
+        </member>
+        <member name="M:Capoala.CmdLine.CommandLineRestrictions.LegalArguments.GetViolations">
+            <summary>
+            Performs all necessary queries to determine whether any violations were found, returning all violation objects as <see cref="T:Capoala.CmdLine.CommandLineViolation"/>.
+            </summary>
+            <returns>
+            Returns a collection of <see cref="T:Capoala.CmdLine.CommandLineViolation"/> representing the violations, if any violations where found.
+            Returns an empty collection if no violations were found.
+            </returns>
+        </member>
+        <member name="T:Capoala.CmdLine.CommandLineRestrictions.UnknownArgumentRestriction">
+            <summary>
+            A restriction which restricts unknown arguments.
+            </summary>
+        </member>
+        <member name="M:Capoala.CmdLine.CommandLineRestrictions.UnknownArgumentRestriction.GetViolations">
+            <summary>
+            Performs all necessary queries to determine whether any violations were found, returning all violation objects as <see cref="T:Capoala.CmdLine.CommandLineViolation"/>.
+            </summary>
+            <returns>
+            Returns a collection of <see cref="T:Capoala.CmdLine.CommandLineViolation"/> representing the violations, if any violations where found.
+            Returns an empty collection if no violations were found.
+            </returns>
+        </member>
+        <member name="T:Capoala.CmdLine.CommandLineRestrictions.HierarchyRestriction">
+            <summary>
+            A restriction which enforces the hierarchal order.
+            </summary>
+        </member>
+        <member name="M:Capoala.CmdLine.CommandLineRestrictions.HierarchyRestriction.GetViolations">
+            <summary>
+            Performs all necessary queries to determine whether any violations were found, returning all violation objects as <see cref="T:Capoala.CmdLine.CommandLineViolation"/>.
+            </summary>
+            <returns>
+            Returns a collection of <see cref="T:Capoala.CmdLine.CommandLineViolation"/> representing the violations, if any violations where found.
+            Returns an empty collection if no violations were found.
+            </returns>
+        </member>
+        <member name="T:Capoala.CmdLine.CommandLineRestrictions.ParameterCountRestriction">
+            <summary>
+            A restriction which specifies how many parameters an <see cref="T:Capoala.CmdLine.ICommandLineArgument"/> should have.
+            </summary>
+        </member>
+        <member name="P:Capoala.CmdLine.CommandLineRestrictions.ParameterCountRestriction.CallChain">
+            <summary>
+            The call-chain.
+            </summary>
+        </member>
+        <member name="P:Capoala.CmdLine.CommandLineRestrictions.ParameterCountRestriction.MinParamsAllowed">
+            <summary>
+            The minimum number of required parameters.
+            </summary>
+        </member>
+        <member name="P:Capoala.CmdLine.CommandLineRestrictions.ParameterCountRestriction.MaxParamsAllowed">
+            <summary>
+            The maximum number of allowed parameters.
+            </summary>
+        </member>
+        <member name="M:Capoala.CmdLine.CommandLineRestrictions.ParameterCountRestriction.#ctor(System.Int32,System.Int32,Capoala.CmdLine.ICommandLineArgument[])">
+            <summary>
+            Creates a new instance of <see cref="T:Capoala.CmdLine.CommandLineRestrictions.ParameterCountRestriction"/>.
+            </summary>
+            <param name="min">The minimum number of required parameters.</param>
+            <param name="max">The maximum number of allowed parameters.</param>
+            <param name="callChain">The call-chain.</param>
+        </member>
+        <member name="M:Capoala.CmdLine.CommandLineRestrictions.ParameterCountRestriction.GetViolations">
+            <summary>
+            Performs all necessary queries to determine whether any violations were found, returning all violation objects as <see cref="T:Capoala.CmdLine.CommandLineViolation"/>.
+            </summary>
+            <returns>
+            Returns a collection of <see cref="T:Capoala.CmdLine.CommandLineViolation"/> representing the violations, if any violations where found.
+            Returns an empty collection if no violations were found.
+            </returns>
+        </member>
+        <member name="T:Capoala.CmdLine.CommandLineRestrictions.IllegalComboRestriction">
+            <summary>
+            A restriction which specifies illegal combinations.
+            </summary>
+        </member>
+        <member name="P:Capoala.CmdLine.CommandLineRestrictions.IllegalComboRestriction.FirstGrouping">
+            <summary>
+            The first grouping.
+            </summary>
+        </member>
+        <member name="P:Capoala.CmdLine.CommandLineRestrictions.IllegalComboRestriction.SecondGrouping">
+            <summary>
+            The second grouping.
+            </summary>
+        </member>
+        <member name="M:Capoala.CmdLine.CommandLineRestrictions.IllegalComboRestriction.#ctor(Capoala.CmdLine.ICommandLineGrouping,Capoala.CmdLine.ICommandLineGrouping)">
+            <summary>
+            Creates a new instance of <see cref="T:Capoala.CmdLine.CommandLineRestrictions.IllegalComboRestriction"/>.
+            </summary>
+            <param name="firstGrouping">The first grouping.</param>
+            <param name="secondGrouping">The second grouping.</param>
+        </member>
+        <member name="M:Capoala.CmdLine.CommandLineRestrictions.IllegalComboRestriction.GetViolations">
+            <summary>
+            Performs all necessary queries to determine whether any violations were found, returning all violation objects as <see cref="T:Capoala.CmdLine.CommandLineViolation"/>.
+            </summary>
+            <returns>
+            Returns a collection of <see cref="T:Capoala.CmdLine.CommandLineViolation"/> representing the violations, if any violations where found.
+            Returns an empty collection if no violations were found.
+            </returns>
+        </member>
+        <member name="T:Capoala.CmdLine.CommandLineRestrictions.MandatedComboRestriction">
+            <summary>
+            A restriction which specifies mandated combinations.
+            </summary>
+        </member>
+        <member name="P:Capoala.CmdLine.CommandLineRestrictions.MandatedComboRestriction.FirstGrouping">
+            <summary>
+            The first grouping.
+            </summary>
+        </member>
+        <member name="P:Capoala.CmdLine.CommandLineRestrictions.MandatedComboRestriction.SecondGrouping">
+            <summary>
+            The second grouping.
+            </summary>
+        </member>
+        <member name="M:Capoala.CmdLine.CommandLineRestrictions.MandatedComboRestriction.#ctor(Capoala.CmdLine.ICommandLineGrouping,Capoala.CmdLine.ICommandLineGrouping)">
+            <summary>
+            Creates a new instance of <see cref="T:Capoala.CmdLine.CommandLineRestrictions.IllegalComboRestriction"/>.
+            </summary>
+            <param name="firstGrouping">The first grouping.</param>
+            <param name="secondGrouping">The second grouping.</param>
+        </member>
+        <member name="M:Capoala.CmdLine.CommandLineRestrictions.MandatedComboRestriction.GetViolations">
+            <summary>
+            Performs all necessary queries to determine whether any violations were found, returning all violation objects as <see cref="T:Capoala.CmdLine.CommandLineViolation"/>.
+            </summary>
+            <returns>
+            Returns a collection of <see cref="T:Capoala.CmdLine.CommandLineViolation"/> representing the violations, if any violations where found.
+            Returns an empty collection if no violations were found.
+            </returns>
+        </member>
+        <member name="T:Capoala.CmdLine.CommandLineLinq">
+            <summary>
+            Contains extensions methods that extend native LINQ functionality.
+            </summary>
+        </member>
+        <member name="M:Capoala.CmdLine.CommandLineLinq.ExcludeSubset``1(System.Collections.Generic.IEnumerable{``0},System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Returns the specified collection, minus the given subset. 
+            </summary>
+            <typeparam name="T">The type of object.</typeparam>
+            <param name="firstSequence">The source collection.</param>
+            <param name="secondSequence">The subset to remove from the source collection.</param>
+            <returns>
+            Returns the source collection, minus the subset. 
+            If the subset was not found, then the source collection is returned without modification.
+            </returns>
+            <exception cref="T:System.ArgumentNullException">
+            Throws when <paramref name="firstSequence"/> is null.
+            </exception>
+        </member>
+        <member name="M:Capoala.CmdLine.CommandLineLinq.UnorderedSequenceEquals``1(System.Collections.Generic.IEnumerable{``0},System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Determines whether two sequences contain the same values, regardless of order.
+            </summary>
+            <typeparam name="T">The type of object.</typeparam>
+            <param name="firstSequence">The source collection.</param>
+            <param name="secondSequence">The collection to compare to.</param>
+            <returns>
+            Returns true if both sequences contain the same values.
+            Returns false if <paramref name="secondSequence"/> is null, or the sequences do not contain the same values.
+            </returns>
+            <exception cref="T:System.ArgumentNullException">
+            Throws when <paramref name="firstSequence"/> is null.
+            </exception>
+        </member>
+    </members>
+</doc>

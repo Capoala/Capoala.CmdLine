@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>Capoala.CmdLine</id>
+    <version>2017.1.1.1</version>
+    <authors>Jonathan Nash</authors>
+    <owners>Jonathan Nash</owners>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <licenseUrl>https://github.com/Capoala/Capoala.CmdLine/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/Capoala/Capoala.CmdLine</projectUrl>
+    <description>A cross-platform command line management framework.</description>
+    <releaseNotes>Initial release. Built upon .NET Standard 1.5.</releaseNotes>
+    <copyright>Copyright 2017 Jonathan Nash</copyright>
+    <tags>capoala nash commandline command line parser</tags>
+    <dependencies>
+      <group targetFramework=".NETStandard1.5">
+        <dependency id="NETStandard.Library" version="1.6.1" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="C:\.Zero Dawn\Capoala.CmdLine\Capoala.CmdLine\bin\Release\netstandard1.5\Capoala.CmdLine.dll" target="lib\netstandard1.5\Capoala.CmdLine.dll" />
+    <file src="C:\.Zero Dawn\Capoala.CmdLine\Capoala.CmdLine\bin\Release\netstandard1.5\Capoala.CmdLine.xml" target="lib\netstandard1.5\Capoala.CmdLine.xml" />
+  </files>
+</package>

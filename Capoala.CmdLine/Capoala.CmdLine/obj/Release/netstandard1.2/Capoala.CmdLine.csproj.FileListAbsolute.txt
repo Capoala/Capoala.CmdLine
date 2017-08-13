@@ -1,0 +1,3 @@
+C:\.Zero Dawn\Capoala.CmdLine\Capoala.CmdLine\bin\Release\netstandard1.2\Capoala.CmdLine.deps.json
+C:\.Zero Dawn\Capoala.CmdLine\Capoala.CmdLine\obj\Release\netstandard1.2\Capoala.CmdLine.csprojResolveAssemblyReference.cache
+C:\.Zero Dawn\Capoala.CmdLine\Capoala.CmdLine\obj\Release\netstandard1.2\Capoala.CmdLine.AssemblyInfo.cs
