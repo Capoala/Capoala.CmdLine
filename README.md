@@ -21,7 +21,7 @@ The following sample demenstrates how to create a new argument using the above s
 
 ```csharp
 ICommandLineArgument Convert 
-	= new CommandLineArgument("convert", MainSpec, "Converts a test file into a C# StringBuilder class");
+	= new CommandLineArgument("convert", MainSpec, "Converts a text file into a C# StringBuilder class.");
 
 ICommandLineArgument InFilePath 
 	= new CommandLineArgument("in", OptionalSpec, "The file path to the text file to convert.");
@@ -72,28 +72,27 @@ ICommandLineRestriction<CommandLineViolation> LegalConvert
 
 foreach (var restriction in new ICommandLineRestriction<CommandLineViolation>[] 
 {
-	NoUnknownArgsRestriction,
-	EnforceHierarchy,
-	InFilePathParam,
-	OutFilePathParam,
-	LegalConvert
+  NoUnknownArgsRestriction,
+  EnforceHierarchy,
+  InFilePathParam,
+  OutFilePathParam,
+  LegalConvert
 })
 {
-	if (restriction.IsViolated)
+  if (restriction.IsViolated)
 	{
-		foreach (var violation in restriction.GetViolations())
-		{
-			Console.WriteLine($"{violation.Violation} => {violation.Message}");
-		}		
+	  foreach (var violation in restriction.GetViolations())
+	  {
+	    Console.WriteLine($"{violation.Violation} => {violation.Message}");
+	  }		
 	}
 	else
 	{
-		// Retrieve working file paths.
+	  // Retrieve working file paths.		
+	  string inFilePath = CommandLine.GetParams(Convert, InFilePath);
+	  string outFilePath = CommandLine.GetParams(Convert, outFilePath);
 		
-		string inFilePath = CommandLine.GetParams(Convert, InFilePath);
-		string outFilePath = CommandLine.GetParams(Convert, outFilePath);
-		
-		// Evaluate and do work....
+	  // Evaluate and do work....
 	}
 }
 
