@@ -43,7 +43,7 @@ namespace Capoala.CmdLine
         string Description { get; }
 
         /// <summary>
-        /// TThe <see cref="ICommandLineSpecification"/> used to define this argument's characteristics.
+        /// The <see cref="ICommandLineSpecification"/> used to define this argument's characteristics.
         /// </summary>
         ICommandLineSpecification Specification { get; }
     }
@@ -73,13 +73,13 @@ namespace Capoala.CmdLine
         ICommandLineArgument[] ParentCallChain { get; }
 
         /// <summary>
-        /// The associated - legal - children in relation to <see cref="ParentCallChain"/>.
+        /// The associated children in relation to the <see cref="ParentCallChain"/>.
         /// </summary>
         ICommandLineArgument[] Children { get; }
     }
 
     /// <summary>
-    /// Represents a command line restrictions.
+    /// Represents a command line restriction.
     /// </summary>
     /// <typeparam name="T">The object type to return should a violation occur.</typeparam>
     public interface ICommandLineRestriction<T>
@@ -90,7 +90,8 @@ namespace Capoala.CmdLine
         bool IsViolated { get; }
 
         /// <summary>
-        /// Performs all necessary queries to determine whether any violations were found, returning all violation objects as <typeparamref name="T"/>.
+        /// Performs all necessary queries to determine whether any violations were found, 
+        /// returning all violation objects as <typeparamref name="T"/>.
         /// </summary>
         /// <returns>
         /// Returns a collection of <typeparamref name="T"/> representing the violations, if any violations where found.
@@ -129,7 +130,8 @@ namespace Capoala.CmdLine
     /// <summary>
     /// A default implementation of <see cref="ICommandLineSpecification"/>. This class cannot be inherited.
     /// <para>
-    /// To implement a new <see cref="ICommandLineSpecification"/> implementation, inherit from <see cref="CommandLine.BaseImplementations.CommandLineSpecificationBase"/>.
+    /// To implement a new <see cref="ICommandLineSpecification"/> implementation, 
+    /// inherit from <see cref="CommandLine.BaseImplementations.CommandLineSpecificationBase"/>.
     /// </para>
     /// </summary>
     public sealed class CommandLineSpecification : CommandLine.BaseImplementations.CommandLineSpecificationBase
@@ -152,7 +154,8 @@ namespace Capoala.CmdLine
     /// <summary>
     /// A default implementation of <see cref="ICommandLineArgument"/>. This class cannot be inherited.
     /// <para>
-    /// To implement a new <see cref="ICommandLineArgument"/> implementation, inherit from <see cref="CommandLine.BaseImplementations.CommandLineArgumentBase"/>.
+    /// To implement a new <see cref="ICommandLineArgument"/> implementation, 
+    /// inherit from <see cref="CommandLine.BaseImplementations.CommandLineArgumentBase"/>.
     /// </para>
     /// </summary>
     public sealed class CommandLineArgument : CommandLine.BaseImplementations.CommandLineArgumentBase
@@ -182,7 +185,8 @@ namespace Capoala.CmdLine
     /// <summary>
     /// A default implementation of <see cref="ICommandLineGrouping"/>. This class cannot be inherited.
     /// <para>
-    /// To implement a new <see cref="ICommandLineGrouping"/> implementation, inherit from <see cref="CommandLine.BaseImplementations.CommandLineGroupingBase"/>.
+    /// To implement a new <see cref="ICommandLineGrouping"/> implementation, 
+    /// inherit from <see cref="CommandLine.BaseImplementations.CommandLineGroupingBase"/>.
     /// </para>
     /// </summary>
     public sealed class CommandLineGrouping : CommandLine.BaseImplementations.CommandLineGroupingBase
@@ -191,7 +195,7 @@ namespace Capoala.CmdLine
         /// Creates new instance of <see cref="CommandLineGrouping"/>.
         /// </summary>
         /// <param name="parentCallChain">The parent call-chain.</param>
-        /// <param name="children">The associated - legal - children in relation to <paramref name="parentCallChain"/>.</param>
+        /// <param name="children">The associated children in relation to <paramref name="parentCallChain"/>.</param>
         /// <exception cref="System.ArgumentNullException">
         /// Throws when <paramref name="parentCallChain"/> is null or contains not elements.
         /// </exception>
@@ -202,7 +206,7 @@ namespace Capoala.CmdLine
         /// Creates new instance of <see cref="CommandLineGrouping"/>.
         /// </summary>
         /// <param name="parentCallChain">The parent call-chain.</param>
-        /// <param name="children">The associated - legal - children in relation to <paramref name="parentCallChain"/>.</param>
+        /// <param name="children">The associated children in relation to <paramref name="parentCallChain"/>.</param>
         /// <exception cref="System.ArgumentNullException">
         /// Throws when <paramref name="parentCallChain"/> is null or contains not elements.
         /// </exception>
@@ -237,7 +241,7 @@ namespace Capoala.CmdLine
         public static IEnumerable<string> Arguments => Environment.GetCommandLineArgs().Skip(1);
 
         /// <summary>
-        /// Returns the received command line arguments, minus the path to the executing application.
+        /// Returns the received command line arguments as a <see cref="string"/>, minus the path to the executing application.
         /// </summary>
         public static string ArgumentsString => string.Join(" ", Arguments);
 
@@ -257,23 +261,31 @@ namespace Capoala.CmdLine
         public static int RootHierarchy => KnownSpecifications.Select(kspec => kspec.Hierarchy).Min();
 
         /// <summary>
-        /// Returns the <see cref="ICommandLineSpecification"/> with the lowest <see cref="ICommandLineSpecification.Hierarchy"/> from the <see cref="KnownSpecifications"/> collection.
+        /// Returns the <see cref="ICommandLineSpecification"/> with the lowest <see cref="ICommandLineSpecification.Hierarchy"/> 
+        /// from the <see cref="KnownSpecifications"/> collection.
         /// </summary>
         public static ICommandLineSpecification RootSpecification => KnownSpecifications.Where(ks => ks.Hierarchy == RootHierarchy).FirstOrDefault();
 
 
         /// <summary>
-        /// Returns a collection of values starting at <paramref name="argument"/>, and ending at the next value that begins with the first character of <paramref name="argument"/>.
+        /// Returns a collection of values starting at <paramref name="argument"/>, and ending at the next value that begins 
+        /// with the first character of <paramref name="argument"/>.
         /// </summary>
         /// <param name="argument">The argument to search for.</param>
-        /// <param name="collectionToSearch">The collection to search in. Specifying null will default to <see cref="CommandLine.Arguments"/>.</param>
+        /// <param name="collectionToSearch">
+        /// The collection to search. 
+        /// Specifying null will default to <see cref="CommandLine.Arguments"/>.
+        /// </param>
         /// <returns>
-        /// Returns all child <see cref="ICommandLineArgument.Command"/> and parameters based upon the <see cref="ICommandLineSpecification"/> if <paramref name="argument"/> is found.
+        /// Returns all child <see cref="ICommandLineArgument.Command"/> and parameters based upon the 
+        /// <see cref="ICommandLineSpecification"/> if <paramref name="argument"/> is found.
         /// Returns an empty collection if <paramref name="argument"/> is not found.
         /// </returns>
         /// <remarks>
-        /// This method searches <paramref name="collectionToSearch"/> for a value that matches <paramref name="argument"/> using the <see cref="CommandLine.Comparer"/> value.
-        /// Once found, that value and all proceeding values are returned until a value whose first character matches that of the <paramref name="argument"/>'s delimiter.
+        /// This method searches <paramref name="collectionToSearch"/> for a value that matches <paramref name="argument"/> 
+        /// using the <see cref="CommandLine.Comparer"/> value.
+        /// Once found, that value and all proceeding values are returned until a value whose first character matches that 
+        /// of the <paramref name="argument"/>'s delimiter.
         /// 
         /// If <paramref name="collectionToSearch"/> is null, <see cref="CommandLine.Arguments"/> is used.
         /// 
@@ -298,14 +310,20 @@ namespace Capoala.CmdLine
         /// Returns a collection of child arguments and parameters of the given call-chain.
         /// </summary>
         /// <param name="callChain">The call-chain.</param>
-        /// <param name="collectionToSearch">The collection to search. Specifying null will default to <see cref="CommandLine.Arguments"/>.</param>
+        /// <param name="collectionToSearch">
+        /// The collection to search. 
+        /// Specifying null will default to <see cref="CommandLine.Arguments"/>.
+        /// </param>
         /// <returns>
-        /// Returns all child <see cref="ICommandLineArgument.Command"/> and parameters based upon the <see cref="ICommandLineSpecification"/> if <paramref name="callChain"/> is found.
+        /// Returns all child <see cref="ICommandLineArgument.Command"/> and parameters based upon the 
+        /// <see cref="ICommandLineSpecification"/> if <paramref name="callChain"/> is found.
         /// Returns an empty collection if <paramref name="callChain"/> is not found.
         /// </returns>
         /// <remarks>
-        /// This method searches <paramref name="collectionToSearch"/> for a value that matches <paramref name="callChain"/> using the <see cref="CommandLine.Comparer"/> value.
-        /// Once found, that value and all proceeding values are returned until a value whose first character matches that of the <paramref name="callChain"/>'s last argument's delimiter.
+        /// This method searches <paramref name="collectionToSearch"/> for a value that matches <paramref name="callChain"/> 
+        /// using the <see cref="CommandLine.Comparer"/> value.
+        /// Once found, that value and all proceeding values are returned until a value whose first character matches that 
+        /// of the <paramref name="callChain"/>'s last argument's delimiter.
         /// 
         /// If <paramref name="collectionToSearch"/> is null, <see cref="CommandLine.Arguments"/> is used.
         /// 
@@ -329,12 +347,15 @@ namespace Capoala.CmdLine
         /// </summary>
         /// <param name="callChain">The call-chain.</param>
         /// <returns>
-        /// Returns all child <see cref="ICommandLineArgument.Command"/> and parameters based upon the <see cref="ICommandLineSpecification"/> if <paramref name="callChain"/> is found.
+        /// Returns all child <see cref="ICommandLineArgument.Command"/> and parameters based upon the 
+        /// <see cref="ICommandLineSpecification"/> if <paramref name="callChain"/> is found.
         /// Returns an empty collection if <paramref name="callChain"/> is not found.
         /// </returns>
         /// <remarks>
-        /// This method searches <see cref="CommandLine.Arguments"/> for a value that matches <paramref name="callChain"/> using the <see cref="CommandLine.Comparer"/> value.
-        /// Once found, that value and all proceeding values are returned until a value whose first character matches that of the <paramref name="callChain"/>'s last argument's delimiter.
+        /// This method searches <see cref="CommandLine.Arguments"/> for a value that matches <paramref name="callChain"/> 
+        /// using the <see cref="CommandLine.Comparer"/> value.
+        /// Once found, that value and all proceeding values are returned until a value whose first character matches that 
+        /// of the <paramref name="callChain"/>'s last argument's delimiter.
         /// 
         /// If no matches to <paramref name="callChain"/> are found, an empty collection is returned.
         /// </remarks>
@@ -346,10 +367,13 @@ namespace Capoala.CmdLine
         /// Returns all parameters associated with the specified <see cref="ICommandLineArgument"/>.
         /// </summary>
         /// <param name="argument">The argument to retrieve the parameters of.</param>
-        /// <param name="collectionToSearch">The collection to search. Specifying null will default to <see cref="CommandLine.Arguments"/>.</param>
+        /// <param name="collectionToSearch">
+        /// The collection to search. 
+        /// Specifying null will default to <see cref="CommandLine.Arguments"/>.
+        /// </param>
         /// <returns>
-        /// Searches <paramref name="collectionToSearch"/> for <paramref name="argument"/>. Once found, proceeding values are returned
-        /// until a value begins with a known <see cref="ICommandLineSpecification.Delimiter"/>.
+        /// Searches <paramref name="collectionToSearch"/> for <paramref name="argument"/>. 
+        /// Once found, proceeding values are returned until a value begins with a known <see cref="ICommandLineSpecification.Delimiter"/>.
         /// 
         /// If <paramref name="argument"/> is not found, or no parameters are found, an empty collection is returned.
         /// </returns>
@@ -363,10 +387,13 @@ namespace Capoala.CmdLine
         /// Returns all parameters associated with the specified call-chain.
         /// </summary>
         /// <param name="callChain">The call-chain to retrieve the parameters of.</param>
-        /// <param name="collectionToSearch">The collection to search. Specifying null will default to <see cref="CommandLine.Arguments"/>.</param>
+        /// <param name="collectionToSearch">
+        /// The collection to search. 
+        /// Specifying null will default to <see cref="CommandLine.Arguments"/>.
+        /// </param>
         /// <returns>
-        /// Searches <paramref name="collectionToSearch"/> for <paramref name="callChain"/>. Once found, proceeding values are returned
-        /// until a value begins with a known <see cref="ICommandLineSpecification.Delimiter"/>.
+        /// Searches <paramref name="collectionToSearch"/> for <paramref name="callChain"/>. 
+        /// Once found, proceeding values are returned until a value begins with a known <see cref="ICommandLineSpecification.Delimiter"/>.
         /// 
         /// If <paramref name="callChain"/> is not found, or no parameters are found, an empty collection is returned.
         /// </returns>
@@ -378,8 +405,8 @@ namespace Capoala.CmdLine
         /// </summary>
         /// <param name="callChain">The call-chain to retrieve the parameters of.</param>
         /// <returns>
-        /// Searches <see cref="CommandLine.Arguments"/> for <paramref name="callChain"/>. Once found, proceeding values are returned
-        /// until a value begins with a known <see cref="ICommandLineSpecification.Delimiter"/>.
+        /// Searches <see cref="CommandLine.Arguments"/> for <paramref name="callChain"/>. 
+        /// Once found, proceeding values are returned until a value begins with a known <see cref="ICommandLineSpecification.Delimiter"/>.
         /// 
         /// If <paramref name="callChain"/> is not found, or no parameters are found, an empty collection is returned.
         /// </returns>
@@ -392,7 +419,8 @@ namespace Capoala.CmdLine
         /// </summary>
         /// <param name="collectionToFilter">The collection of arguments.</param>
         /// <returns>
-        /// Returns the given collection minus any values that do not begin with any known <see cref="ICommandLineSpecification"/> delimiters.
+        /// Returns the given collection, minus any values that do not begin with any 
+        /// known <see cref="ICommandLineSpecification"/> delimiters.
         /// </returns>
         public static IEnumerable<string> ExcludeParams(IEnumerable<string> collectionToFilter)
             => collectionToFilter.Where(str => KnownSpecifications.Select(icls => icls.Delimiter).Contains(str.FirstOrDefault()));
@@ -402,7 +430,8 @@ namespace Capoala.CmdLine
         /// </summary>
         /// <param name="collectionToFilter">The collection of arguments.</param>
         /// <returns>
-        /// Returns the given collection minus any values that do not begin with any known <see cref="ICommandLineSpecification"/> delimiters.
+        /// Returns the given collection, minus any values that do not begin with any 
+        /// known <see cref="ICommandLineSpecification"/> delimiters.
         /// </returns>
         public static IEnumerable<string> ExcludeParams(IEnumerable<ICommandLineArgument> collectionToFilter)
             => ExcludeParams(collectionToFilter.Select(icla => icla.Command));
@@ -419,10 +448,13 @@ namespace Capoala.CmdLine
             => callChain.AsEnumerable().Found();
 
         /// <summary>
-        /// Determines if the specified call-chain is present the specified collection.
+        /// Determines if the specified call-chain is present in the specified collection.
         /// </summary>
         /// <param name="callChain">The call-chain to check.</param>
-        /// <param name="collectionToSearch">The collection to search. Specifying null will default to <see cref="CommandLine.Arguments"/>.</param>
+        /// <param name="collectionToSearch">
+        /// The collection to search. 
+        /// Specifying null will default to <see cref="CommandLine.Arguments"/>.
+        /// </param>
         /// <returns>
         /// Returns true if the call-chain is present; otherwise, returns false.
         /// </returns>
@@ -450,8 +482,13 @@ namespace Capoala.CmdLine
         /// Determines if the specified <see cref="ICommandLineGrouping"/> is present in the specified collection.
         /// </summary>
         /// <param name="grouping">The <see cref="ICommandLineGrouping"/> to evaluate.</param>
-        /// <param name="collectionToSearch">The collection to search. Specifying null will default to <see cref="CommandLine.Arguments"/>.</param>
-        /// <returns></returns>
+        /// <param name="collectionToSearch">
+        /// The collection to search. 
+        /// Specifying null will default to <see cref="CommandLine.Arguments"/>.
+        /// </param>
+        /// <returns>
+        /// Returns true if the call-chain is present; otherwise, returns false.
+        /// </returns>
         public static bool Found(this ICommandLineGrouping grouping, IEnumerable<string> collectionToSearch = null)
             => grouping.ParentCallChain.Concat(grouping.Children).Found(collectionToSearch);
 
@@ -736,7 +773,7 @@ namespace Capoala.CmdLine
                 public ICommandLineArgument[] ParentCallChain { get; }
 
                 /// <summary>
-                /// The associated - legal - children in relation to <see cref="ParentCallChain"/>.
+                /// The associated children in relation to <see cref="ParentCallChain"/>.
                 /// </summary>
                 public ICommandLineArgument[] Children { get; }
 
@@ -747,7 +784,7 @@ namespace Capoala.CmdLine
                 /// </para>
                 /// </summary>
                 /// <param name="parentCallChain">The parent call-chain.</param>
-                /// <param name="children">The associated - legal - children in relation to <paramref name="parentCallChain"/>.</param>
+                /// <param name="children">The associated children in relation to <paramref name="parentCallChain"/>.</param>
                 /// <exception cref="System.ArgumentNullException">
                 /// Throws when <paramref name="parentCallChain"/> is null or contains not elements.
                 /// </exception>
@@ -772,7 +809,7 @@ namespace Capoala.CmdLine
                 /// </para>
                 /// </summary>
                 /// <param name="parentCallChain">The parent call-chain.</param>
-                /// <param name="children">The associated - legal - children in relation to <paramref name="parentCallChain"/>.</param>
+                /// <param name="children">The associated children in relation to <paramref name="parentCallChain"/>.</param>
                 /// <exception cref="System.ArgumentNullException">
                 /// Throws when <paramref name="parentCallChain"/> is null or contains not elements.
                 /// </exception>
@@ -1118,7 +1155,7 @@ namespace Capoala.CmdLine
                 FirstGrouping = firstGrouping;
                 SecondGrouping = secondGrouping;
             }
-         
+
             /// <summary>
             /// Performs all necessary queries to determine whether any violations were found, returning all violation objects as <see cref="CommandLineViolation"/>.
             /// </summary>
