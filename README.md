@@ -1,7 +1,6 @@
 # Welcome to Capoala.CmdLine!
 
 Capoala.CmdLine is a sophisticated command line utility that allows developers to quickly define, evaluate, and manage... well, the command line!
-
 ## Defining a specification. 
 
 The ICommandLineSpecification interface defines the characteristics of a command line argument, such as its delimiter and hierarchal order.
@@ -16,7 +15,7 @@ ICommandLineSpecification OptionalSpec = new CommandLineSpecification(1, '-');
 ## Defining an argument. 
 
 The ICommandLineArgument interface defines the actual command line argument.
-
+ 
 The following sample demenstrates how to create a new argument using the above specifications.
 
 ```csharp
@@ -38,10 +37,9 @@ ICommandLineGrouping ConvertGroup = new CommandLineGrouping(
   );
 ```
 
-
 ## Defining rules and restrictions.
 
-The ICommandLineRestriction<T> interface provides an easy way to create re-usable restrictions and rule-sets. 
+The ICommandLineRestriction<T> interface provides an easy way to create re-usable restrictions and rule-sets. Built direclty into the framework are common, default restrictions that provide a quick and clear way of defining restrictions.
 
 The following example shows how to:
 
@@ -51,11 +49,20 @@ The following example shows how to:
 4. And finally, that each optional argument must contain exactly one paramter. 
 
 ```csharp
-ICommandLineRestriction<CommandLineViolation> NoUnknownArgsRestriction = new CommandLineRestrictions.UnknownArgumentRestriction();
-ICommandLineRestriction<CommandLineViolation> EnforceHierarchy = new CommandLineRestrictions.HierarchyRestriction();
-ICommandLineRestriction<CommandLineViolation> InFilePathParam = new CommandLineRestrictions.ParameterCountRestriction(1, 1, InFilePath);
-ICommandLineRestriction<CommandLineViolation> OutFilePathParam = new CommandLineRestrictions.ParameterCountRestriction(1, 1, OutFilePath);
-ICommandLineRestriction<CommandLineViolation> LegalConvert = new CommandLineRestrictions.LegalArguments(ConvertGroup);
+ICommandLineRestriction<CommandLineViolation> NoUnknownArgsRestriction 
+  = new CommandLineRestrictions.UnknownArgumentRestriction();
+
+ICommandLineRestriction<CommandLineViolation> EnforceHierarchy 
+  = new CommandLineRestrictions.HierarchyRestriction();
+
+ICommandLineRestriction<CommandLineViolation> InFilePathParam 
+  = new CommandLineRestrictions.ParameterCountRestriction(1, 1, InFilePath);
+
+ICommandLineRestriction<CommandLineViolation> OutFilePathParam 
+  = new CommandLineRestrictions.ParameterCountRestriction(1, 1, OutFilePath);
+
+ICommandLineRestriction<CommandLineViolation> LegalConvert 
+  = new CommandLineRestrictions.LegalArguments(ConvertGroup);
 
 foreach (var restriction in new ICommandLineRestriction<CommandLineViolation>[] 
 {
