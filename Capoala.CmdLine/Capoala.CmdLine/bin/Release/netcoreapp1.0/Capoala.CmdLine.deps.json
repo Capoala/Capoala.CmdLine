@@ -6,7 +6,7 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v1.0": {
-      "capoala.cmdline/2017.1.1.1": {
+      "capoala.cmdline/2017.1.1.2": {
         "runtime": {
           "Capoala.CmdLine.dll": {}
         }
@@ -14,7 +14,7 @@
     }
   },
   "libraries": {
-    "capoala.cmdline/2017.1.1.1": {
+    "capoala.cmdline/2017.1.1.2": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

@@ -7,7 +7,7 @@
   "targets": {
     ".NETStandard,Version=v1.5": {},
     ".NETStandard,Version=v1.5/": {
-      "capoala.cmdline/2017.1.1.1": {
+      "capoala.cmdline/2017.1.1.2": {
         "dependencies": {
           "NETStandard.Library": "1.6.1"
         },
@@ -565,7 +565,7 @@
     }
   },
   "libraries": {
-    "capoala.cmdline/2017.1.1.1": {
+    "capoala.cmdline/2017.1.1.2": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
