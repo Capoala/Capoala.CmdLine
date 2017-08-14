@@ -13,9 +13,10 @@
     <PackageReleaseNotes>Initial release. Built upon .NET Standard 1.5.</PackageReleaseNotes>
     <AssemblyVersion>2017.1.1.1</AssemblyVersion>
     <FileVersion>2017.1.1.1</FileVersion>
-    <PackageProjectUrl>https://github.com/Capoala/Capoala.CmdLine</PackageProjectUrl>
+    <PackageProjectUrl>https://capoala.github.io/Capoala.CmdLine/</PackageProjectUrl>
     <PackageIconUrl></PackageIconUrl>
     <PackageLicenseUrl>https://github.com/Capoala/Capoala.CmdLine/blob/master/LICENSE</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/Capoala/Capoala.CmdLine</RepositoryUrl>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
