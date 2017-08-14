@@ -20,9 +20,14 @@ The ICommandLineArgument interface defines the actual command line argument. Add
 The following sample demenstrates how to create a new argument using the above specifications.
 
 ```csharp
-ICommandLineArgument Convert = new CommandLineArgument("convert", MainSpec, "Converts a test file into a C# StringBuilder class");
-ICommandLineArgument InFilePath = new CommandLineArgument("in", OptionalSpec, "The file path to the text file to convert.");
-ICommandLineArgument OutFilePath = new CommandLineArgument("out", OptionalSpec, "The target file path to write the C# class file.");
+ICommandLineArgument Convert 
+	= new CommandLineArgument("convert", MainSpec, "Converts a test file into a C# StringBuilder class");
+
+ICommandLineArgument InFilePath 
+	= new CommandLineArgument("in", OptionalSpec, "The file path to the text file to convert.");
+
+ICommandLineArgument OutFilePath 
+	= new CommandLineArgument("out", OptionalSpec, "The target file path to write the C# class file.");
 ```
 
 ## Defining command line groupings (parent-child relationships).
@@ -33,9 +38,9 @@ The following examples demonstrates how to group the above arguments, such that 
 
 ```csharp
 ICommandLineGrouping ConvertGroup = new CommandLineGrouping(
-  new ICommandLineArgument[] { Convert },
-  new ICommandLineArgument[] { InFilePath, OutFilePath}
-  );
+	new ICommandLineArgument[] { Convert },
+	new ICommandLineArgument[] { InFilePath, OutFilePath}
+	);
 ```
 
 ## Defining rules and restrictions.
@@ -51,36 +56,45 @@ The following example shows how to:
 
 ```csharp
 ICommandLineRestriction<CommandLineViolation> NoUnknownArgsRestriction 
-  = new CommandLineRestrictions.UnknownArgumentRestriction();
+	= new CommandLineRestrictions.UnknownArgumentRestriction();
 
 ICommandLineRestriction<CommandLineViolation> EnforceHierarchy 
-  = new CommandLineRestrictions.HierarchyRestriction();
+	= new CommandLineRestrictions.HierarchyRestriction();
 
 ICommandLineRestriction<CommandLineViolation> InFilePathParam 
-  = new CommandLineRestrictions.ParameterCountRestriction(1, 1, InFilePath);
+	= new CommandLineRestrictions.ParameterCountRestriction(1, 1, InFilePath);
 
 ICommandLineRestriction<CommandLineViolation> OutFilePathParam 
-  = new CommandLineRestrictions.ParameterCountRestriction(1, 1, OutFilePath);
+	= new CommandLineRestrictions.ParameterCountRestriction(1, 1, OutFilePath);
 
 ICommandLineRestriction<CommandLineViolation> LegalConvert 
-  = new CommandLineRestrictions.LegalArguments(ConvertGroup);
+	= new CommandLineRestrictions.LegalArguments(ConvertGroup);
 
 foreach (var restriction in new ICommandLineRestriction<CommandLineViolation>[] 
 {
-  NoUnknownArgsRestriction,
-  EnforceHierarchy,
-  InFilePathParam,
-  OutFilePathParam,
-  LegalConvert
+	NoUnknownArgsRestriction,
+	EnforceHierarchy,
+	InFilePathParam,
+	OutFilePathParam,
+	LegalConvert
 })
 {
-  if (restriction.IsViolated)
-  {
-   foreach (var violation in restriction.GetViolations())
-    {
-      Console.WriteLine($"{violation.Violation} => {violation.Message}");
-    }
-  }
+	if (restriction.IsViolated)
+	{
+		foreach (var violation in restriction.GetViolations())
+		{
+			Console.WriteLine($"{violation.Violation} => {violation.Message}");
+		}		
+	}
+	else
+	{
+		// Retrieve working file paths.
+		
+		string inFilePath = CommandLine.GetParams(Convert, InFilePath);
+		string outFilePath = CommandLine.GetParams(Convert, outFilePath);
+		
+		// Evaluate and do work....
+	}
 }
 
 ```
@@ -89,9 +103,9 @@ foreach (var restriction in new ICommandLineRestriction<CommandLineViolation>[]
 
 The above example is a very short, concise example on how one would implement a file conversion utility. At the command line, you would see the following:
 
-$ FileConvert.exe /convert -in "C:\test\inFile.txt" -out "C:\test\class.cs"
+$ FileConverter.exe /convert -in "C:\test\inFile.txt" -out "C:\test\class.cs"
 
-The Capoala.CmdLine library provides interfaces, detailed abstract implementations, and default sealed classes to get you going up and quick. The sealed classes were used throughout the entire example; however, creating your own implementation is as easy as inheriting from one of the abstract classes located in CommandLine.BaseImplementations. 
+The Capoala.CmdLine library provides interfaces, detailed abstract implementations, and default sealed classes to get you up going and quick. The sealed classes were used throughout the entire example; however, creating your own implementation is as easy as inheriting from one of the abstract classes located in CommandLine.BaseImplementations. 
 
 Well, that's it! Download now and experience how easy it can be write even the most complex of command line utilities. 
 
