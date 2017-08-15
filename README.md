@@ -23,17 +23,17 @@ The following sample demenstrates how to create a new argument using the above s
 ICommandLineArgument Convert 
 	= new CommandLineArgument("convert", 
 	                          TierOneSpec, 
-                              "Converts a text file into a C# StringBuilder class.");
+                                  "Converts a text file into a C# StringBuilder class.");
 
 ICommandLineArgument InFilePath 
 	= new CommandLineArgument("in", 
 	                          TierTwoSpec, 
-                              "The file path to the text file to convert.");
+                                  "The file path to the text file to convert.");
 
 ICommandLineArgument OutFilePath 
 	= new CommandLineArgument("out", 
 	                          TierTwoSpec, 
-                              "The target file path to write the C# class file.");
+                                  "The target file path to write the C# class file.");
 ```
 
 ## Defining command line groupings (parent-child relationships).
@@ -125,12 +125,12 @@ Now, let's add some grandchildren.
 ICommandLineArgument OutTypeStringBuilder 
 	= new CommandLineArgument("stringbuilder", 
 	                          TierThreeSpec, 
-                              "Specifies that the file should be converted into a StringBuilder.");
+                                  "Specifies that the file should be converted into a StringBuilder.");
 	
 ICommandLineArgument OutTypeArray 
 	= new CommandLineArgument("array", 
 	                          TierThreeSpec, 
-                              "Specifies that the file should be converted into a string array.");		
+                                  "Specifies that the file should be converted into a string array.");		
 ```
 
 Now let's add additional groupings to associate our new grandchildren. And since we want to mandate that a specific file type is supplied, we'll remove the original grouping.
@@ -163,8 +163,8 @@ Finally, we'll add the three new groupings to our Legal restriction, and remove 
 ```csharp
 ICommandLineRestriction<CommandLineViolation> Legal
 	= new CommandLineRestrictions.LegalArguments(ConvertGroupStringBuilder, 
-                                                 ConvertGroupArray, 
-                                                 ConvertGroupStringBuilderAndArray);
+                                                     ConvertGroupArray, 
+                                                     ConvertGroupStringBuilderAndArray);
 ```	
 
 And now, we can do something like this!
