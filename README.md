@@ -67,7 +67,7 @@ ICommandLineRestriction<CommandLineViolation> InFilePathParam
 ICommandLineRestriction<CommandLineViolation> OutFilePathParam 
 	= new CommandLineRestrictions.ParameterCountRestriction(1, 1, OutFilePath);
 
-ICommandLineRestriction<CommandLineViolation> LegalConvert 
+ICommandLineRestriction<CommandLineViolation> Legal
 	= new CommandLineRestrictions.LegalArguments(ConvertGroup);
 
 foreach (var restriction in new ICommandLineRestriction<CommandLineViolation>[] 
@@ -76,7 +76,7 @@ foreach (var restriction in new ICommandLineRestriction<CommandLineViolation>[]
   EnforceHierarchy,
   InFilePathParam,
   OutFilePathParam,
-  LegalConvert
+  Legal
 })
 {
   if (restriction.IsViolated)
@@ -98,17 +98,85 @@ foreach (var restriction in new ICommandLineRestriction<CommandLineViolation>[]
 
 ```
 
-## Wrapping up
-
 The above example is a very short, concise example on how one would implement a file conversion utility. At the command line, you would see the following:
 
 $ FileConverter.exe /convert -in "C:\test\inFile.txt" -out "C:\test\class.cs"
 
+
+## What's a "call-chain", and how do we evaluate and retrieve data from the command line?
+
+A call-chain refers to the chain of arguments that make up a parent call hierarchy. Typically, we only make use of one or two levels of arguments, such as the previous examples; however, what if what we are converting is a text file into an auto-generated .cs (class) file? What if we would like to determine how that class file is built? (e.g. StringBuilder, string[], List<string>, etc.);
+
+Well, let's create a new child specification - or grandchild - to solve this issue.
+
+```csharp
+ICommandLineSpecification FormatSpec = new CommandLineSpecification(2, ':');
+```
+
+Now, let's add some grandchildren.
+
+```csharp
+ICommandLineArgument OutTypeStringBuilder 
+	= new CommandLineArgument("stringbuilder", FormatSpec, "Specifies that the file should be converted into a StringBuilder.");
+	
+ICommandLineArgument OutTypeArray 
+	= new CommandLineArgument("array", FormatSpec, "Specifies that the file should be converted into a string array.");		
+```
+
+Now let's add additional groupings to associate our new grandchildren. And since we want to mandate that a specific file type is supplied, we'll remove the original grouping.
+
+```csharp
+ICommandLineGrouping ConvertGroupStringBuilder = new CommandLineGrouping(
+	new ICommandLineArgument[] { Convert, OutFilePath }, // call-chain "/convert -out" is a parent call-chain to the grandchild using FormatSpec.
+	new ICommandLineArgument[] { OutTypeStringBuilder} // This states we will allow this grandchild by itself.
+	);	
+	
+ICommandLineGrouping ConvertGroupArray = new CommandLineGrouping(
+	new ICommandLineArgument[] { Convert, OutFilePath }, // call-chain "/convert -out" is a parent call-chain to the grandchild using FormatSpec.
+	new ICommandLineArgument[] { OutTypeArray} // This states we will allow this grandchild by itself.
+	);		
+	
+ICommandLineGrouping ConvertGroupStringBuilderAndArray = new CommandLineGrouping(
+	new ICommandLineArgument[] { Convert, OutFilePath }, // call-chain "/convert -out" is a parent call-chain to the grandchild using FormatSpec.
+	new ICommandLineArgument[] { OutTypeStringBuilder, OutTypeArray} // This states we will allow both grandchildren to be called together.
+	);			
+```
+
+Finally, we'll add the three new groupings to our Legal restriction, and remove the original grouping that we remvoed during our previous step.
+
+```csharp
+ICommandLineRestriction<CommandLineViolation> Legal
+	= new CommandLineRestrictions.LegalArguments(ConvertGroupStringBuilder, ConvertGroupArray, ConvertGroupStringBuilderAndArray);
+```	
+
+And now, we can do something like this!
+
+$ FileConverter.exe /convert -in "C:\test\inFile.txt" -out "C:\test\class.cs" :stringbuilder -out "C:\test\class.cs" :array
+
+
+By changing the InFilePathParam and OutFilePathParam to be associated with OutTypeStringBuilder and OutTypeArray, we could then change where the paramter data is stored.
+
+$ FileConverter.exe /convert -in "C:\test\inFile.txt" -out :stringbuilder "C:\test\class.cs" -out :array "C:\test\class.cs"
+
+Now, instead of accessing the paramter data via "string inFilePath = CommandLine.GetParams(Convert, InFilePath).First();", we now access the data via "string inFilePath = CommandLine.GetParams(Convert, InFilePath, OutTypeArray).First();"
+
+Of course, since we can accept grandchildren solo or together, we'd first check if the command is present. Since we've already setup the groupings, we can simply call:
+
+```csharp
+if (CommandLine.Found(ConvertGroupArray))
+	// Do work with just OutTypeArray
+else if (CommandLine.Found(ConvertGroupStringBuilder))
+	// Do work with just ConvertGroupStringBuilder
+else if (CommandLine.Found(ConvertGroupStringBuilderAndArray))
+	// Do work with both!
+```
+
+
+## Wrapping up
+
 The Capoala.CmdLine library provides interfaces, detailed abstract implementations, and default sealed classes to get you up going and quick. The sealed classes were used throughout the entire example; however, creating your own implementation is as easy as inheriting from one of the abstract classes located in CommandLine.BaseImplementations. 
 
-Well, that's it! Download now and experience how easy it can be write even the most complex of command line utilities. 
-
-P.S. More documentation and examples coming soon. Stay tuned!
+Well, that's it! Download now and experience how easy it can be to write even the most complex of command line utilities!
 
 
 
