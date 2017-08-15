@@ -21,20 +21,26 @@ The following sample demenstrates how to create a new argument using the above s
 
 ```csharp
 ICommandLineArgument Convert 
-	= new CommandLineArgument("convert", TierOneSpec, "Converts a text file into a C# StringBuilder class.");
+	= new CommandLineArgument("convert", 
+	                          TierOneSpec, 
+							  "Converts a text file into a C# StringBuilder class.");
 
 ICommandLineArgument InFilePath 
-	= new CommandLineArgument("in", TierTwoSpec, "The file path to the text file to convert.");
+	= new CommandLineArgument("in", 
+	                          TierTwoSpec, 
+							  "The file path to the text file to convert.");
 
 ICommandLineArgument OutFilePath 
-	= new CommandLineArgument("out", TierTwoSpec, "The target file path to write the C# class file.");
+	= new CommandLineArgument("out", 
+	                          TierTwoSpec, 
+							  "The target file path to write the C# class file.");
 ```
 
 ## Defining command line groupings (parent-child relationships).
 
 The ICommandLineGrouping interface provides a way to create parent-child relationships further than the initial ICommandLineSpecification.Hierarchy number does.
 
-The following examples demonstrates how to group the above arguments, such that Convert is associated with both InFilePath and OutFilePath.
+The following example demonstrates how to group the above arguments, such that Convert is associated with both InFilePath and OutFilePath. Note, the below example specifies that both InFilePath and OutFilePath must be present in the grouping. Supplying only InFilePath or OutFilePath results in the grouping not being found. If you would like to allow OutFilePath to be left off, then you would define another grouping containing only InFilePath for the child collection.
 
 ```csharp
 ICommandLineGrouping ConvertGroup = new CommandLineGrouping(
@@ -45,14 +51,14 @@ ICommandLineGrouping ConvertGroup = new CommandLineGrouping(
 
 ## Defining rules and restrictions.
 
-The ICommandLineRestriction<T> interface provides an easy way to create re-usable restrictions and rule-sets. Built direclty into the framework are common, default restrictions that provide a quick and clear way of defining restrictions.
+The ICommandLineRestriction<T> interface provides an easy way to create re-usable restrictions and rule-sets. Built direclty into the framework are common, default restrictions that provide a quick and clear way of defining these rules.
 
 The following example shows how to:
 
 1. Enforce that unknown arguments are not allowed.
 2. Ensure that correct hierarchal order is enforced.
 3. Ensure that both InFilePath and OutFilePath are used in conjuction with Convert.
-4. And finally, that each optional argument must contain exactly one paramter. 
+4. And finally, that InFilePath and OutFilePath arguments must each contain exactly one paramter. 
 
 ```csharp
 ICommandLineRestriction<CommandLineViolation> NoUnknownArgsRestriction 
@@ -105,7 +111,7 @@ $ FileConverter.exe /convert -in "C:\test\inFile.txt" -out "C:\test\class.cs"
 
 ## What's a "call-chain", and how do we evaluate and retrieve data from the command line?
 
-A call-chain refers to the chain of arguments that make up a parent call hierarchy. Typically, we only make use of one or two levels of arguments, such as the previous examples; however, what if what we are converting is a text file into an auto-generated .cs (class) file? What if we would like to determine how that class file is built? (e.g. StringBuilder, string[], List<string>, etc.);
+A call-chain refers to the chain of arguments that make up a parent call hierarchy. Typically, we only make use of one or two levels of arguments, such as the previous example; however, what if what we are converting is a text file into an auto-generated .cs (class) file? What if we would like to determine how that class file is built? (e.g. StringBuilder, string[], List<string>, etc.);
 
 Well, let's create a new child specification - or grandchild - to solve this issue.
 
@@ -117,28 +123,38 @@ Now, let's add some grandchildren.
 
 ```csharp
 ICommandLineArgument OutTypeStringBuilder 
-	= new CommandLineArgument("stringbuilder", TierThreeSpec, "Specifies that the file should be converted into a StringBuilder.");
+	= new CommandLineArgument("stringbuilder", 
+	                          TierThreeSpec, 
+							  "Specifies that the file should be converted into a StringBuilder.");
 	
 ICommandLineArgument OutTypeArray 
-	= new CommandLineArgument("array", TierThreeSpec, "Specifies that the file should be converted into a string array.");		
+	= new CommandLineArgument("array", 
+	                          TierThreeSpec, 
+							  "Specifies that the file should be converted into a string array.");		
 ```
 
 Now let's add additional groupings to associate our new grandchildren. And since we want to mandate that a specific file type is supplied, we'll remove the original grouping.
 
 ```csharp
 ICommandLineGrouping ConvertGroupStringBuilder = new CommandLineGrouping(
-	new ICommandLineArgument[] { Convert, OutFilePath }, // call-chain "/convert -out" is a parent call-chain to the grandchild using TierThreeSpec.
-	new ICommandLineArgument[] { OutTypeStringBuilder} // This states we will allow this grandchild by itself.
+	// call-chain "/convert -out" is a parent call-chain to the grandchild using TierThreeSpec.
+	new ICommandLineArgument[] { Convert, OutFilePath }, 
+	// This states we will allow this grandchild by itself.
+	new ICommandLineArgument[] { OutTypeStringBuilder} 
 	);	
 	
 ICommandLineGrouping ConvertGroupArray = new CommandLineGrouping(
-	new ICommandLineArgument[] { Convert, OutFilePath }, // call-chain "/convert -out" is a parent call-chain to the grandchild using TierThreeSpec.
+	// call-chain "/convert -out" is a parent call-chain to the grandchild using TierThreeSpec.
+	new ICommandLineArgument[] { Convert, OutFilePath }, 
+	// This states we will allow this grandchild by itself.
 	new ICommandLineArgument[] { OutTypeArray} // This states we will allow this grandchild by itself.
 	);		
 	
 ICommandLineGrouping ConvertGroupStringBuilderAndArray = new CommandLineGrouping(
-	new ICommandLineArgument[] { Convert, OutFilePath }, // call-chain "/convert -out" is a parent call-chain to the grandchild using TierThreeSpec.
-	new ICommandLineArgument[] { OutTypeStringBuilder, OutTypeArray} // This states we will allow both grandchildren to be called together.
+	// call-chain "/convert -out" is a parent call-chain to the grandchild using TierThreeSpec.
+	new ICommandLineArgument[] { Convert, OutFilePath }, 
+	// This states we will allow both grandchildren to be called together.
+	new ICommandLineArgument[] { OutTypeStringBuilder, OutTypeArray} 
 	);			
 ```
 
@@ -146,17 +162,19 @@ Finally, we'll add the three new groupings to our Legal restriction, and remove 
 
 ```csharp
 ICommandLineRestriction<CommandLineViolation> Legal
-	= new CommandLineRestrictions.LegalArguments(ConvertGroupStringBuilder, ConvertGroupArray, ConvertGroupStringBuilderAndArray);
+	= new CommandLineRestrictions.LegalArguments(ConvertGroupStringBuilder, 
+											     ConvertGroupArray, 
+												 ConvertGroupStringBuilderAndArray);
 ```	
 
 And now, we can do something like this!
 
-$ FileConverter.exe /convert -in "C:\test\inFile.txt" -out "C:\test\class.cs" :stringbuilder -out "C:\test\class.cs" :array
+$ FileConverter.exe /convert -in "C:\test\inFile.txt" -out "C:\test\class.cs" :stringbuilder :array
 
 
 By changing the InFilePathParam and OutFilePathParam to be associated with OutTypeStringBuilder and OutTypeArray, we could then change where the paramter data is stored.
 
-$ FileConverter.exe /convert -in "C:\test\inFile.txt" -out :stringbuilder "C:\test\class.cs" -out :array "C:\test\class.cs"
+$ FileConverter.exe /convert -in "C:\test\inFile.txt" -out :stringbuilder "C:\test\class.cs" :array "C:\test\class.cs"
 
 Now, instead of accessing the paramter data via "string inFilePath = CommandLine.GetParams(Convert, InFilePath).First();", we now access the data via "string inFilePath = CommandLine.GetParams(Convert, InFilePath, OutTypeArray).First();"
 
@@ -176,8 +194,5 @@ else if (CommandLine.Found(ConvertGroupStringBuilderAndArray))
 
 The Capoala.CmdLine library provides interfaces, detailed abstract implementations, and default sealed classes to get you up going and quick. The sealed classes were used throughout the entire example; however, creating your own implementation is as easy as inheriting from one of the abstract classes located in CommandLine.BaseImplementations. 
 
-Well, that's it! Download now and experience how easy it can be to write even the most complex of command line utilities!
-
-
-
+Well, that's it... Enjoy!
 
