@@ -386,17 +386,33 @@
         <member name="M:Capoala.CmdLine.CommandLine.Found(Capoala.CmdLine.ICommandLineArgument[])">
             <summary>
             Determines if the specified call-chain is present in the <see cref="P:Capoala.CmdLine.CommandLine.Arguments"/> collection.
+            <para>
+            This overload takes proceeding, children arguments into consideration.
+            </para>
             </summary>
             <param name="callChain">The call-chain to check.</param>
             <returns>
             Returns true if the call-chain is present; otherwise, returns false.
             </returns>
         </member>
-        <member name="M:Capoala.CmdLine.CommandLine.Found(System.Collections.Generic.IEnumerable{Capoala.CmdLine.ICommandLineArgument},System.Collections.Generic.IEnumerable{System.String})">
+        <member name="M:Capoala.CmdLine.CommandLine.FoundIgnoreingChildren(Capoala.CmdLine.ICommandLineArgument[])">
+            <summary>
+            Determines if the specified call-chain is present in the <see cref="P:Capoala.CmdLine.CommandLine.Arguments"/> collection.
+            <para>
+            This overload ignores proceeding, children arguments in the evaluation.
+            </para>
+            </summary>
+            <param name="callChain">The call-chain to check.</param>
+            <returns>
+            Returns true if the call-chain is present; otherwise, returns false.
+            </returns>
+        </member>
+        <member name="M:Capoala.CmdLine.CommandLine.Found(System.Collections.Generic.IEnumerable{Capoala.CmdLine.ICommandLineArgument},System.Boolean,System.Collections.Generic.IEnumerable{System.String})">
             <summary>
             Determines if the specified call-chain is present in the specified collection.
             </summary>
             <param name="callChain">The call-chain to check.</param>
+            <param name="ignoreChildren">Determines whether children proceeding <paramref name="callChain"/> should be included as part of the match.</param>
             <param name="collectionToSearch">
             The collection to search. 
             Specifying null will default to <see cref="P:Capoala.CmdLine.CommandLine.Arguments"/>.

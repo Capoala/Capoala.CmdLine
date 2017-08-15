@@ -439,6 +439,9 @@ namespace Capoala.CmdLine
 
         /// <summary>
         /// Determines if the specified call-chain is present in the <see cref="CommandLine.Arguments"/> collection.
+        /// <para>
+        /// This overload takes proceeding, children arguments into consideration.
+        /// </para>
         /// </summary>
         /// <param name="callChain">The call-chain to check.</param>
         /// <returns>
@@ -448,9 +451,23 @@ namespace Capoala.CmdLine
             => callChain.AsEnumerable().Found();
 
         /// <summary>
+        /// Determines if the specified call-chain is present in the <see cref="CommandLine.Arguments"/> collection.
+        /// <para>
+        /// This overload ignores proceeding, children arguments in the evaluation.
+        /// </para>
+        /// </summary>
+        /// <param name="callChain">The call-chain to check.</param>
+        /// <returns>
+        /// Returns true if the call-chain is present; otherwise, returns false.
+        /// </returns>
+        public static bool FoundIgnoreingChildren(params ICommandLineArgument[] callChain)
+            => callChain.AsEnumerable().Found(true);
+
+        /// <summary>
         /// Determines if the specified call-chain is present in the specified collection.
         /// </summary>
         /// <param name="callChain">The call-chain to check.</param>
+        /// <param name="ignoreChildren">Determines whether children proceeding <paramref name="callChain"/> should be included as part of the match.</param>
         /// <param name="collectionToSearch">
         /// The collection to search. 
         /// Specifying null will default to <see cref="CommandLine.Arguments"/>.
@@ -458,7 +475,7 @@ namespace Capoala.CmdLine
         /// <returns>
         /// Returns true if the call-chain is present; otherwise, returns false.
         /// </returns>
-        public static bool Found(this IEnumerable<ICommandLineArgument> callChain, IEnumerable<string> collectionToSearch = null)
+        public static bool Found(this IEnumerable<ICommandLineArgument> callChain, bool ignoreChildren = false, IEnumerable<string> collectionToSearch = null)
         {
             collectionToSearch = ExcludeParams(collectionToSearch ?? Arguments);
             if (collectionToSearch.Any())
@@ -466,13 +483,40 @@ namespace Capoala.CmdLine
                 var commands = callChain.Select(icla => icla.Command);
                 int countOfRoot = collectionToSearch.Count(str => callChain.First().Command.Equals(str, Comparer));
 
-                for (int i = 0; i < countOfRoot; i++)
+                if (ignoreChildren)
                 {
-                    var segment = callChain.First().GetSegment(collectionToSearch);
-                    if (segment.UnorderedSequenceEquals(commands))
-                        return true;
-                    else
-                        collectionToSearch = collectionToSearch.ExcludeSubset(segment);
+                    bool mismatch = false;
+                    for (int i = 0; i < countOfRoot; i++)
+                    {
+                        var segment = callChain.First().GetSegment(collectionToSearch);
+
+                        if (commands.Count() < segment.Count())
+                        {
+                            for (int cmd = 0; cmd < commands.Count(); cmd++)
+                            {
+                                if (!commands.ElementAt(cmd).Equals(segment.ElementAt(cmd), Comparer))
+                                {
+                                    mismatch = true;
+                                    break;
+                                }
+                            }
+                            if (mismatch)
+                                collectionToSearch = collectionToSearch.ExcludeSubset(segment);
+                        }
+                    }
+                    return !mismatch;
+                }
+                else
+                {
+                    for (int i = 0; i < countOfRoot; i++)
+                    {
+                        var segment = callChain.First().GetSegment(collectionToSearch);
+
+                        if (segment.UnorderedSequenceEquals(commands))
+                            return true;
+                        else
+                            collectionToSearch = collectionToSearch.ExcludeSubset(segment);
+                    }
                 }
             }
             return false;
@@ -490,7 +534,8 @@ namespace Capoala.CmdLine
         /// Returns true if the call-chain is present; otherwise, returns false.
         /// </returns>
         public static bool Found(this ICommandLineGrouping grouping, IEnumerable<string> collectionToSearch = null)
-            => grouping.ParentCallChain.Concat(grouping.Children).Found(collectionToSearch);
+            => grouping.ParentCallChain.Concat(grouping.Children).Found(false, collectionToSearch);
+
 
         /// <summary>
         /// Contains base interface implementations. This class cannot be inherited.
