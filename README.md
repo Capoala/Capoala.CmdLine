@@ -6,11 +6,11 @@ Capoala.CmdLine is a sophisticated command line library that allows developers t
 
 The ICommandLineSpecification interface defines the characteristics of a command line argument, such as its delimiter and hierarchal order.
 
-The following sample demenstrates how to create a new specification, where MainSpec represents a parent, and OptionalSpec a child - or decorator - to further define optional parameters.
+The following sample demenstrates how to create a new specification, where TierOneSpec represents a parent, and TierTwoSpec a child - or decorator - to further define optional parameters.
 
 ```csharp
-ICommandLineSpecification MainSpec = new CommandLineSpecification(0, '/');
-ICommandLineSpecification OptionalSpec = new CommandLineSpecification(1, '-');
+ICommandLineSpecification TierOneSpec = new CommandLineSpecification(0, '/');
+ICommandLineSpecification TierTwoSpec = new CommandLineSpecification(1, '-');
 ```
 
 ## Defining an argument. 
@@ -21,13 +21,13 @@ The following sample demenstrates how to create a new argument using the above s
 
 ```csharp
 ICommandLineArgument Convert 
-	= new CommandLineArgument("convert", MainSpec, "Converts a text file into a C# StringBuilder class.");
+	= new CommandLineArgument("convert", TierOneSpec, "Converts a text file into a C# StringBuilder class.");
 
 ICommandLineArgument InFilePath 
-	= new CommandLineArgument("in", OptionalSpec, "The file path to the text file to convert.");
+	= new CommandLineArgument("in", TierTwoSpec, "The file path to the text file to convert.");
 
 ICommandLineArgument OutFilePath 
-	= new CommandLineArgument("out", OptionalSpec, "The target file path to write the C# class file.");
+	= new CommandLineArgument("out", TierTwoSpec, "The target file path to write the C# class file.");
 ```
 
 ## Defining command line groupings (parent-child relationships).
@@ -110,34 +110,34 @@ A call-chain refers to the chain of arguments that make up a parent call hierarc
 Well, let's create a new child specification - or grandchild - to solve this issue.
 
 ```csharp
-ICommandLineSpecification FormatSpec = new CommandLineSpecification(2, ':');
+ICommandLineSpecification TierThreeSpec = new CommandLineSpecification(2, ':');
 ```
 
 Now, let's add some grandchildren.
 
 ```csharp
 ICommandLineArgument OutTypeStringBuilder 
-	= new CommandLineArgument("stringbuilder", FormatSpec, "Specifies that the file should be converted into a StringBuilder.");
+	= new CommandLineArgument("stringbuilder", TierThreeSpec, "Specifies that the file should be converted into a StringBuilder.");
 	
 ICommandLineArgument OutTypeArray 
-	= new CommandLineArgument("array", FormatSpec, "Specifies that the file should be converted into a string array.");		
+	= new CommandLineArgument("array", TierThreeSpec, "Specifies that the file should be converted into a string array.");		
 ```
 
 Now let's add additional groupings to associate our new grandchildren. And since we want to mandate that a specific file type is supplied, we'll remove the original grouping.
 
 ```csharp
 ICommandLineGrouping ConvertGroupStringBuilder = new CommandLineGrouping(
-	new ICommandLineArgument[] { Convert, OutFilePath }, // call-chain "/convert -out" is a parent call-chain to the grandchild using FormatSpec.
+	new ICommandLineArgument[] { Convert, OutFilePath }, // call-chain "/convert -out" is a parent call-chain to the grandchild using TierThreeSpec.
 	new ICommandLineArgument[] { OutTypeStringBuilder} // This states we will allow this grandchild by itself.
 	);	
 	
 ICommandLineGrouping ConvertGroupArray = new CommandLineGrouping(
-	new ICommandLineArgument[] { Convert, OutFilePath }, // call-chain "/convert -out" is a parent call-chain to the grandchild using FormatSpec.
+	new ICommandLineArgument[] { Convert, OutFilePath }, // call-chain "/convert -out" is a parent call-chain to the grandchild using TierThreeSpec.
 	new ICommandLineArgument[] { OutTypeArray} // This states we will allow this grandchild by itself.
 	);		
 	
 ICommandLineGrouping ConvertGroupStringBuilderAndArray = new CommandLineGrouping(
-	new ICommandLineArgument[] { Convert, OutFilePath }, // call-chain "/convert -out" is a parent call-chain to the grandchild using FormatSpec.
+	new ICommandLineArgument[] { Convert, OutFilePath }, // call-chain "/convert -out" is a parent call-chain to the grandchild using TierThreeSpec.
 	new ICommandLineArgument[] { OutTypeStringBuilder, OutTypeArray} // This states we will allow both grandchildren to be called together.
 	);			
 ```
