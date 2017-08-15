@@ -89,8 +89,8 @@ foreach (var restriction in new ICommandLineRestriction<CommandLineViolation>[]
 	else
 	{
 	  // Retrieve working file paths.		
-	  string inFilePath = CommandLine.GetParams(Convert, InFilePath);
-	  string outFilePath = CommandLine.GetParams(Convert, outFilePath);
+	  string inFilePath = CommandLine.GetParams(Convert, InFilePath).First();
+	  string outFilePath = CommandLine.GetParams(Convert, OutFilePath).First();
 		
 	  // Evaluate and do work....
 	}
