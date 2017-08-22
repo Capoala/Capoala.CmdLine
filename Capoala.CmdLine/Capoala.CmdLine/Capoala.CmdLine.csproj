@@ -1,27 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.5;netcoreapp1.0;net462;net47</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netstandard1.6;netstandard1.5;netcoreapp2.0;netcoreapp1.1;netcoreapp1.0;net47;net462;net461</TargetFrameworks>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-    <Version>2017.1.1.3</Version>
+    <Version>2017.1.1.4</Version>
     <Authors>Jonathan Nash</Authors>
     <Company />
     <Description>A cross-platform command line management framework.</Description>
     <Copyright>Copyright 2017 Jonathan Nash</Copyright>
     <PackageTags>capoala nash commandline command line parser command-line command-line-parser</PackageTags>
-    <PackageReleaseNotes>
-      2017.1.1.3
-      Added support for ignoring child arguments when determining whether a parent call-chain is found.
-
-      2017.1.1.2
-      Updated target frameworks.
-
-      2017.1.1.1
-      Initial release.
-    </PackageReleaseNotes>
-    <AssemblyVersion>2017.1.1.3</AssemblyVersion>
-    <FileVersion>2017.1.1.3</FileVersion>
+    <PackageReleaseNotes>Added target frameworks.</PackageReleaseNotes>
+    <AssemblyVersion>2017.1.1.4</AssemblyVersion>
+    <FileVersion>2017.1.1.4</FileVersion>
     <PackageProjectUrl>https://capoala.github.io/Capoala.CmdLine/</PackageProjectUrl>
     <PackageIconUrl></PackageIconUrl>
     <PackageLicenseUrl>https://github.com/Capoala/Capoala.CmdLine/blob/master/LICENSE</PackageLicenseUrl>
@@ -29,7 +20,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\netstandard1.5\Capoala.CmdLine.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\netstandard2.0\Capoala.CmdLine.xml</DocumentationFile>
   </PropertyGroup>
 
 </Project>

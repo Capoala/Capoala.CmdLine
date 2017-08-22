@@ -249,6 +249,12 @@
             from the <see cref="P:Capoala.CmdLine.CommandLine.KnownSpecifications"/> collection.
             </summary>
         </member>
+        <member name="P:Capoala.CmdLine.CommandLine.AllPossibleCombinations">
+            <summary>
+            Returns a listing of all possible command line combinations.
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:Capoala.CmdLine.CommandLine.GetSegment(Capoala.CmdLine.ICommandLineArgument,System.Collections.Generic.IEnumerable{System.String})">
             <summary>
             Returns a collection of values starting at <paramref name="argument"/>, and ending at the next value that begins 
@@ -433,6 +439,15 @@
             <returns>
             Returns true if the call-chain is present; otherwise, returns false.
             </returns>
+        </member>
+        <member name="M:Capoala.CmdLine.CommandLine.GetAllCombinationsRecursiveBase(System.Int32,System.Int32,Capoala.CmdLine.ICommandLineArgument[])">
+            <summary>
+            A recursive method which returns a listing of all possible command line combinations.
+            </summary>
+            <param name="previous">The previous hierarchical number.</param>
+            <param name="max">The maximum number of types of command line arguments.</param>
+            <param name="callHierarchy">The call hierarchy - parent to child relationship - where the first, left, is represented as a parent to the proceeding argument.</param>
+            <returns></returns>
         </member>
         <member name="T:Capoala.CmdLine.CommandLine.BaseImplementations">
             <summary>

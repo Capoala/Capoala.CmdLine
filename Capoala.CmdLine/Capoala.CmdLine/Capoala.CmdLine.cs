@@ -266,6 +266,15 @@ namespace Capoala.CmdLine
         /// </summary>
         public static ICommandLineSpecification RootSpecification => KnownSpecifications.Where(ks => ks.Hierarchy == RootHierarchy).FirstOrDefault();
 
+        /// <summary>
+        /// Returns a listing of all possible command line combinations.
+        /// </summary>
+        /// <returns></returns>
+        public static IEnumerable<ICommandLineArgument[]> AllPossibleCombinations
+            => GetAllCombinationsRecursiveBase(0, KnownArguments.Where(ka => ka != null && ka.Specification != null)
+                                                                .Select(ka => ka.Specification.Hierarchy)
+                                                                .Max());
+
 
         /// <summary>
         /// Returns a collection of values starting at <paramref name="argument"/>, and ending at the next value that begins 
@@ -535,6 +544,28 @@ namespace Capoala.CmdLine
         /// </returns>
         public static bool Found(this ICommandLineGrouping grouping, IEnumerable<string> collectionToSearch = null)
             => grouping.ParentCallChain.Concat(grouping.Children).Found(false, collectionToSearch);
+
+
+        /// <summary>
+        /// A recursive method which returns a listing of all possible command line combinations.
+        /// </summary>
+        /// <param name="previous">The previous hierarchical number.</param>
+        /// <param name="max">The maximum number of types of command line arguments.</param>
+        /// <param name="callHierarchy">The call hierarchy - parent to child relationship - where the first, left, is represented as a parent to the proceeding argument.</param>
+        /// <returns></returns>
+        private static IEnumerable<ICommandLineArgument[]> GetAllCombinationsRecursiveBase(int previous, int max, params ICommandLineArgument[] callHierarchy)
+        {
+            foreach (ICommandLineArgument icla in KnownArguments.Where(ka => ka?.Specification?.Hierarchy == previous))
+            {
+                ICommandLineArgument[] workingArray = new ICommandLineArgument[callHierarchy.Length + 1];
+                callHierarchy.CopyTo(workingArray, 0);
+                workingArray[callHierarchy.Length] = icla;
+                yield return workingArray;
+                if (previous < max)
+                    foreach (ICommandLineArgument[] ricla in GetAllCombinationsRecursiveBase(previous + 1, max, workingArray))
+                        yield return ricla;
+            }
+        }
 
 
         /// <summary>
@@ -976,9 +1007,7 @@ namespace Capoala.CmdLine
             /// </summary>
             /// <param name="legalCombinations">A collection of <see cref="ICommandLineGrouping"/> representing legal call-chains and associated child <see cref="ICommandLineArgument"/>.</param>
             public LegalArguments(params ICommandLineGrouping[] legalCombinations)
-            {
-                LegalCombinations = legalCombinations;
-            }
+                => LegalCombinations = legalCombinations;
 
             /// <summary>
             /// Performs all necessary queries to determine whether any violations were found, returning all violation objects as <see cref="CommandLineViolation"/>.
