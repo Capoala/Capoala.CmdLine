@@ -21,19 +21,22 @@ The following sample demenstrates how to create a new argument using the above s
 
 ```csharp
 ICommandLineArgument Convert 
-	= new CommandLineArgument("convert", 
-	                          TierOneSpec, 
-                                  "Converts a text file into a C# StringBuilder class.");
+	= new CommandLineArgument(
+        "convert", 
+	    TierOneSpec, 
+        "Converts a text file into a C# StringBuilder class.");
 
 ICommandLineArgument InFilePath 
-	= new CommandLineArgument("in", 
-	                          TierTwoSpec, 
-                                  "The file path to the text file to convert.");
+	= new CommandLineArgument(
+        "in", 
+	    TierTwoSpec, 
+        "The file path to the text file to convert.");
 
 ICommandLineArgument OutFilePath 
-	= new CommandLineArgument("out", 
-	                          TierTwoSpec, 
-                                  "The target file path to write the C# class file.");
+	= new CommandLineArgument(
+        "out", 
+	    TierTwoSpec, 
+        "The target file path to write the C# class file.");
 ```
 
 ## Defining command line groupings (parent-child relationships).
@@ -123,14 +126,16 @@ Now, let's add some grandchildren.
 
 ```csharp
 ICommandLineArgument OutTypeStringBuilder 
-	= new CommandLineArgument("stringbuilder", 
-	                          TierThreeSpec, 
-                                  "Specifies that the file should be converted into a StringBuilder.");
+	= new CommandLineArgument(
+        "stringbuilder", 
+	    TierThreeSpec, 
+        "Specifies that the file should be converted into a StringBuilder.");
 	
 ICommandLineArgument OutTypeArray 
-	= new CommandLineArgument("array", 
-	                          TierThreeSpec, 
-                                  "Specifies that the file should be converted into a string array.");		
+	= new CommandLineArgument(
+        "array", 
+	    TierThreeSpec, 
+        "Specifies that the file should be converted into a string array.");		
 ```
 
 Now let's add additional groupings to associate our new grandchildren. And since we want to mandate that a specific file type is supplied, we'll remove the original grouping.
@@ -147,7 +152,7 @@ ICommandLineGrouping ConvertGroupArray = new CommandLineGrouping(
 	// call-chain "/convert -out" is a parent call-chain to the grandchild using TierThreeSpec.
 	new ICommandLineArgument[] { Convert, OutFilePath }, 
 	// This states we will allow this grandchild by itself.
-	new ICommandLineArgument[] { OutTypeArray} // This states we will allow this grandchild by itself.
+	new ICommandLineArgument[] { OutTypeArray}
 	);		
 	
 ICommandLineGrouping ConvertGroupStringBuilderAndArray = new CommandLineGrouping(
@@ -162,9 +167,10 @@ Finally, we'll add the three new groupings to our Legal restriction, and remove 
 
 ```csharp
 ICommandLineRestriction<CommandLineViolation> Legal
-	= new CommandLineRestrictions.LegalArguments(ConvertGroupStringBuilder, 
-                                                     ConvertGroupArray, 
-                                                     ConvertGroupStringBuilderAndArray);
+	= new CommandLineRestrictions.LegalArguments(
+        ConvertGroupStringBuilder, 
+        ConvertGroupArray, 
+        ConvertGroupStringBuilderAndArray);
 ```	
 
 And now, we can do something like this!
