@@ -1,18 +1,23 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netstandard1.6;netstandard1.5;netcoreapp2.0;netcoreapp1.1;netcoreapp1.0;net47;net462;net461</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netstandard1.6;netstandard1.5;netcoreapp2.0;netcoreapp1.1;netcoreapp1.0;net47;net462</TargetFrameworks>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-    <Version>2017.1.1.4</Version>
+    <Version>2017.2.0.5</Version>
     <Authors>Jonathan Nash</Authors>
     <Company />
     <Description>A cross-platform command line management framework.</Description>
     <Copyright>Copyright 2017 Jonathan Nash</Copyright>
-    <PackageTags>capoala nash commandline command line parser command-line command-line-parser</PackageTags>
-    <PackageReleaseNotes>Added target frameworks.</PackageReleaseNotes>
-    <AssemblyVersion>2017.1.1.4</AssemblyVersion>
-    <FileVersion>2017.1.1.4</FileVersion>
+    <PackageTags>capoala nash commandline command line parser command-line command-line-parser commandlineparser cmdline cmdlineparser argument argumentparser</PackageTags>
+    <PackageReleaseNotes>Bug Fix: Corrected issue where CommandLine.FoundIgnoringChildren() returned false positives.
+
+API Change: CommandLine.FoundIgnoringChildren has been replaced by CommandLine.Found().
+
+Minor code cleaning and performance improvment.
+</PackageReleaseNotes>
+    <AssemblyVersion>2017.2.0.5</AssemblyVersion>
+    <FileVersion>2017.2.0.5</FileVersion>
     <PackageProjectUrl>https://capoala.github.io/Capoala.CmdLine/</PackageProjectUrl>
     <PackageIconUrl></PackageIconUrl>
     <PackageLicenseUrl>https://github.com/Capoala/Capoala.CmdLine/blob/master/LICENSE</PackageLicenseUrl>

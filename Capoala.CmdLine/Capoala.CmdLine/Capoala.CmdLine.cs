@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -40,7 +41,7 @@ namespace Capoala.CmdLine
         /// <summary>
         /// A description of what this argument represents or does within the scope of the application.
         /// </summary>
-        string Description { get; }
+        string Description { get; set; }
 
         /// <summary>
         /// The <see cref="ICommandLineSpecification"/> used to define this argument's characteristics.
@@ -76,6 +77,10 @@ namespace Capoala.CmdLine
         /// The associated children in relation to the <see cref="ParentCallChain"/>.
         /// </summary>
         ICommandLineArgument[] Children { get; }
+        /// <summary>
+        /// A description of what this grouping represents or does within the scope of the application.
+        /// </summary>
+        string Description { get; set; }
     }
 
     /// <summary>
@@ -98,6 +103,21 @@ namespace Capoala.CmdLine
         /// Returns an empty collection if no violations were found.
         /// </returns>
         IEnumerable<T> GetViolations();
+    }
+
+    /// <summary>
+    /// Defines how a command line call-chain is found.
+    /// </summary>
+    public enum CmdLineSearchCriteria
+    {
+        /// <summary>
+        /// All arguments of the call-chain must be found.
+        /// </summary>
+        Precise,
+        /// <summary>
+        /// Ignore children in the search.
+        /// </summary>
+        IgnoreChildren
     }
 
     /// <summary>
@@ -196,22 +216,24 @@ namespace Capoala.CmdLine
         /// </summary>
         /// <param name="parentCallChain">The parent call-chain.</param>
         /// <param name="children">The associated children in relation to <paramref name="parentCallChain"/>.</param>
+        /// <param name="description">A description of what this grouping represents or does within the scope of the application.</param>
         /// <exception cref="System.ArgumentNullException">
         /// Throws when <paramref name="parentCallChain"/> is null or contains not elements.
         /// </exception>
-        public CommandLineGrouping(ICommandLineArgument parentCallChain, ICommandLineArgument[] children)
-            : base(parentCallChain, children) { }
+        public CommandLineGrouping(ICommandLineArgument parentCallChain, ICommandLineArgument[] children, string description = null)
+            : base(parentCallChain, children, description) { }
 
         /// <summary>
         /// Creates new instance of <see cref="CommandLineGrouping"/>.
         /// </summary>
         /// <param name="parentCallChain">The parent call-chain.</param>
         /// <param name="children">The associated children in relation to <paramref name="parentCallChain"/>.</param>
+        /// <param name="description">A description of what this grouping represents or does within the scope of the application.</param>
         /// <exception cref="System.ArgumentNullException">
         /// Throws when <paramref name="parentCallChain"/> is null or contains not elements.
         /// </exception>
-        public CommandLineGrouping(ICommandLineArgument[] parentCallChain, ICommandLineArgument[] children)
-            : base(parentCallChain, children) { }
+        public CommandLineGrouping(ICommandLineArgument[] parentCallChain, ICommandLineArgument[] children, string description = null)
+            : base(parentCallChain, children, description) { }
     }
 
     /// <summary>
@@ -265,15 +287,6 @@ namespace Capoala.CmdLine
         /// from the <see cref="KnownSpecifications"/> collection.
         /// </summary>
         public static ICommandLineSpecification RootSpecification => KnownSpecifications.Where(ks => ks.Hierarchy == RootHierarchy).FirstOrDefault();
-
-        /// <summary>
-        /// Returns a listing of all possible command line combinations.
-        /// </summary>
-        /// <returns></returns>
-        public static IEnumerable<ICommandLineArgument[]> AllPossibleCombinations
-            => GetAllCombinationsRecursiveBase(0, KnownArguments.Where(ka => ka != null && ka.Specification != null)
-                                                                .Select(ka => ka.Specification.Hierarchy)
-                                                                .Max());
 
 
         /// <summary>
@@ -460,23 +473,10 @@ namespace Capoala.CmdLine
             => callChain.AsEnumerable().Found();
 
         /// <summary>
-        /// Determines if the specified call-chain is present in the <see cref="CommandLine.Arguments"/> collection.
-        /// <para>
-        /// This overload ignores proceeding, children arguments in the evaluation.
-        /// </para>
-        /// </summary>
-        /// <param name="callChain">The call-chain to check.</param>
-        /// <returns>
-        /// Returns true if the call-chain is present; otherwise, returns false.
-        /// </returns>
-        public static bool FoundIgnoreingChildren(params ICommandLineArgument[] callChain)
-            => callChain.AsEnumerable().Found(true);
-
-        /// <summary>
         /// Determines if the specified call-chain is present in the specified collection.
         /// </summary>
         /// <param name="callChain">The call-chain to check.</param>
-        /// <param name="ignoreChildren">Determines whether children proceeding <paramref name="callChain"/> should be included as part of the match.</param>
+        /// <param name="criteria">Determines whether children proceeding <paramref name="callChain"/> should be included as part of the match.</param>
         /// <param name="collectionToSearch">
         /// The collection to search. 
         /// Specifying null will default to <see cref="CommandLine.Arguments"/>.
@@ -484,7 +484,7 @@ namespace Capoala.CmdLine
         /// <returns>
         /// Returns true if the call-chain is present; otherwise, returns false.
         /// </returns>
-        public static bool Found(this IEnumerable<ICommandLineArgument> callChain, bool ignoreChildren = false, IEnumerable<string> collectionToSearch = null)
+        public static bool Found(this IEnumerable<ICommandLineArgument> callChain, CmdLineSearchCriteria criteria = CmdLineSearchCriteria.Precise, IEnumerable<string> collectionToSearch = null)
         {
             collectionToSearch = ExcludeParams(collectionToSearch ?? Arguments);
             if (collectionToSearch.Any())
@@ -492,7 +492,7 @@ namespace Capoala.CmdLine
                 var commands = callChain.Select(icla => icla.Command);
                 int countOfRoot = collectionToSearch.Count(str => callChain.First().Command.Equals(str, Comparer));
 
-                if (ignoreChildren)
+                if (criteria == CmdLineSearchCriteria.IgnoreChildren)
                 {
                     bool mismatch = false;
                     for (int i = 0; i < countOfRoot; i++)
@@ -543,29 +543,40 @@ namespace Capoala.CmdLine
         /// Returns true if the call-chain is present; otherwise, returns false.
         /// </returns>
         public static bool Found(this ICommandLineGrouping grouping, IEnumerable<string> collectionToSearch = null)
-            => grouping.ParentCallChain.Concat(grouping.Children).Found(false, collectionToSearch);
+            => grouping.ParentCallChain.Concat(grouping.Children).Found( CmdLineSearchCriteria.Precise, collectionToSearch);
 
+        // TODO: Implement
+        ///// <summary>
+        ///// Returns a listing of all possible command line combinations.
+        ///// </summary>
+        ///// <returns></returns>
+        //public static IEnumerable<IEnumerable<string>> AllPossibleCombinations()
+        //{
+        //    var minSpec = KnownSpecifications.Min(spec => spec.Hierarchy);
+        //    var maxSpec = KnownSpecifications.Max(spec => spec.Hierarchy);
 
-        /// <summary>
-        /// A recursive method which returns a listing of all possible command line combinations.
-        /// </summary>
-        /// <param name="previous">The previous hierarchical number.</param>
-        /// <param name="max">The maximum number of types of command line arguments.</param>
-        /// <param name="callHierarchy">The call hierarchy - parent to child relationship - where the first, left, is represented as a parent to the proceeding argument.</param>
-        /// <returns></returns>
-        private static IEnumerable<ICommandLineArgument[]> GetAllCombinationsRecursiveBase(int previous, int max, params ICommandLineArgument[] callHierarchy)
-        {
-            foreach (ICommandLineArgument icla in KnownArguments.Where(ka => ka?.Specification?.Hierarchy == previous))
-            {
-                ICommandLineArgument[] workingArray = new ICommandLineArgument[callHierarchy.Length + 1];
-                callHierarchy.CopyTo(workingArray, 0);
-                workingArray[callHierarchy.Length] = icla;
-                yield return workingArray;
-                if (previous < max)
-                    foreach (ICommandLineArgument[] ricla in GetAllCombinationsRecursiveBase(previous + 1, max, workingArray))
-                        yield return ricla;
-            }
-        }
+        //    var stack = new Stack<List<string>>();
+        //    var lastTierPairwiseCombinations = KnownArguments.Where(ka => ka.Specification.Hierarchy == maxSpec).Select(ka => ka.Command).PairwiseCombinations();
+        //    var fullBuild = Enumerable.Empty<IEnumerable<string>>();
+
+        //    for (int i = minSpec; i <= maxSpec - 1; i++)
+        //    {
+        //        var item = KnownArguments.Where(ka => ka.Specification.Hierarchy == i).Select(ka => ka.Command);
+        //        stack.Push(item.ToList());
+        //    }
+
+        //    fullBuild = stack.Pop().Build(lastTierPairwiseCombinations);
+
+        //    for (int i = 0; i <= stack.Count; i++)
+        //    {
+        //        fullBuild = stack.Pop().Build(fullBuild);
+        //    }
+
+        //    foreach (var pairwise in fullBuild.PairwiseSpecial())
+        //    {
+        //        yield return pairwise;
+        //    }
+        //}
 
 
         /// <summary>
@@ -711,7 +722,7 @@ namespace Capoala.CmdLine
                 /// <summary>
                 /// A description of what this argument represents or does within the scope of the application.
                 /// </summary>
-                public string Description { get; }
+                public string Description { get; set; }
 
                 /// <summary>
                 /// TThe <see cref="ICommandLineSpecification"/> used to define this argument's characteristics.
@@ -854,29 +865,9 @@ namespace Capoala.CmdLine
                 public ICommandLineArgument[] Children { get; }
 
                 /// <summary>
-                /// Creates new instance of <see cref="CommandLineGroupingBase"/>.
-                /// <para>
-                /// *See remarks for further details and correct implementation.
-                /// </para>
+                /// A description of what this grouping represents or does within the scope of the application.
                 /// </summary>
-                /// <param name="parentCallChain">The parent call-chain.</param>
-                /// <param name="children">The associated children in relation to <paramref name="parentCallChain"/>.</param>
-                /// <exception cref="System.ArgumentNullException">
-                /// Throws when <paramref name="parentCallChain"/> is null or contains not elements.
-                /// </exception>
-                /// <remarks>
-                /// The <see cref="ICommandLineGrouping.ParentCallChain"/> property represents the full parent hierarchy chain. 
-                /// 
-                /// The <see cref="ICommandLineGrouping.Children"/> property represents associated child pairings. 
-                /// It is important to note this property is not an "all inclusive" listing", but rather an individual grouping. 
-                /// This means that if you have one "main argument", which has three "child arguments", then specifying a grouping
-                /// with "main" and "childOne" would transpose to the command line as "$ main childOne". 
-                /// 
-                /// If you wanted to specify a grouping that states "main" must run with "childOne" and "childTwo", but leave "childThree" as optional, 
-                /// then you would create two groupings; one with "childOne" and "childTwo"; the other, with "childOne", "childTwo", and "childThree".
-                /// </remarks>
-                protected CommandLineGroupingBase(ICommandLineArgument parentCallChain, ICommandLineArgument[] children)
-                    : this(new ICommandLineArgument[] { parentCallChain }, children) { }
+                public string Description { get; set; }
 
                 /// <summary>
                 /// Creates new instance of <see cref="CommandLineGroupingBase"/>.
@@ -886,6 +877,7 @@ namespace Capoala.CmdLine
                 /// </summary>
                 /// <param name="parentCallChain">The parent call-chain.</param>
                 /// <param name="children">The associated children in relation to <paramref name="parentCallChain"/>.</param>
+                /// <param name="description">A description of what this grouping represents or does within the scope of the application.</param>
                 /// <exception cref="System.ArgumentNullException">
                 /// Throws when <paramref name="parentCallChain"/> is null or contains not elements.
                 /// </exception>
@@ -900,13 +892,40 @@ namespace Capoala.CmdLine
                 /// If you wanted to specify a grouping that states "main" must run with "childOne" and "childTwo", but leave "childThree" as optional, 
                 /// then you would create two groupings; one with "childOne" and "childTwo"; the other, with "childOne", "childTwo", and "childThree".
                 /// </remarks>
-                protected CommandLineGroupingBase(ICommandLineArgument[] parentCallChain, ICommandLineArgument[] children)
+                protected CommandLineGroupingBase(ICommandLineArgument parentCallChain, ICommandLineArgument[] children, string description = null)
+                    : this(new ICommandLineArgument[] { parentCallChain }, children, description) { }
+
+                /// <summary>
+                /// Creates new instance of <see cref="CommandLineGroupingBase"/>.
+                /// <para>
+                /// *See remarks for further details and correct implementation.
+                /// </para>
+                /// </summary>
+                /// <param name="parentCallChain">The parent call-chain.</param>
+                /// <param name="children">The associated children in relation to <paramref name="parentCallChain"/>.</param>
+                /// <param name="description">A description of what this grouping represents or does within the scope of the application.</param>
+                /// <exception cref="System.ArgumentNullException">
+                /// Throws when <paramref name="parentCallChain"/> is null or contains not elements.
+                /// </exception>
+                /// <remarks>
+                /// The <see cref="ICommandLineGrouping.ParentCallChain"/> property represents the full parent hierarchy chain. 
+                /// 
+                /// The <see cref="ICommandLineGrouping.Children"/> property represents associated child pairings. 
+                /// It is important to note this property is not an "all inclusive" listing", but rather an individual grouping. 
+                /// This means that if you have one "main argument", which has three "child arguments", then specifying a grouping
+                /// with "main" and "childOne" would transpose to the command line as "$ main childOne". 
+                /// 
+                /// If you wanted to specify a grouping that states "main" must run with "childOne" and "childTwo", but leave "childThree" as optional, 
+                /// then you would create two groupings; one with "childOne" and "childTwo"; the other, with "childOne", "childTwo", and "childThree".
+                /// </remarks>
+                protected CommandLineGroupingBase(ICommandLineArgument[] parentCallChain, ICommandLineArgument[] children, string description = null)
                 {
                     if (!parentCallChain?.Any() ?? false)
                         throw new ArgumentNullException("parentArgument");
 
                     ParentCallChain = parentCallChain;
                     Children = children ?? new ICommandLineArgument[] { };
+                    Description = description;
                 }
 
                 /// <summary>
@@ -1258,7 +1277,7 @@ namespace Capoala.CmdLine
     /// <summary>
     /// Contains extensions methods that extend native LINQ functionality.
     /// </summary>
-    public static class CommandLineLinq
+    internal static class CommandLineLinq
     {
         /// <summary>
         /// Returns the specified collection, minus the given subset. 
@@ -1273,7 +1292,7 @@ namespace Capoala.CmdLine
         /// <exception cref="System.ArgumentNullException">
         /// Throws when <paramref name="firstSequence"/> is null.
         /// </exception>
-        public static IEnumerable<T> ExcludeSubset<T>(this IEnumerable<T> firstSequence, IEnumerable<T> secondSequence)
+        internal static IEnumerable<T> ExcludeSubset<T>(this IEnumerable<T> firstSequence, IEnumerable<T> secondSequence)
         {
             if (firstSequence == null)
                 throw new ArgumentNullException("sourceCollection");
@@ -1332,7 +1351,7 @@ namespace Capoala.CmdLine
         /// <exception cref="System.ArgumentNullException">
         /// Throws when <paramref name="firstSequence"/> is null.
         /// </exception>
-        public static bool UnorderedSequenceEquals<T>(this IEnumerable<T> firstSequence, IEnumerable<T> secondSequence)
+        internal static bool UnorderedSequenceEquals<T>(this IEnumerable<T> firstSequence, IEnumerable<T> secondSequence)
         {
             if (firstSequence == null)
                 throw new ArgumentNullException("sourceCollection");
@@ -1346,5 +1365,107 @@ namespace Capoala.CmdLine
                         return false;
             return true;
         }
+
+        // TODO: Implement
+        ///// <summary>
+        ///// Returns a pairwise combination listing from the specified collection.
+        ///// </summary>
+        ///// <typeparam name="T">The type of object in the collection.</typeparam>
+        ///// <param name="collection">The collection.</param>
+        ///// <returns></returns>
+        //internal static IEnumerable<IEnumerable<T>> PairwiseCombinations<T>(this IEnumerable<T> collection)
+        //{
+        //    var first = collection.First();
+        //    yield return new[] { first };
+        //    if (collection.CountGreaterThan(1))
+        //    {
+        //        var workingSet = collection.Skip(1);
+        //        foreach (var remaining in workingSet)
+        //        {
+        //            yield return new[] { first, remaining };
+        //        }
+        //        if (workingSet.CountGreaterThan(1))
+        //        {
+        //            yield return new[] { first }.Concat(workingSet);
+        //        }
+        //        foreach (var pair in PairwiseCombinations(workingSet))
+        //        {
+        //            yield return pair;
+        //        }
+        //    }
+        //}
+
+        ///// <summary>
+        ///// Returns a special pairwise combination listing from the specified collection of collections which aids in accounting for various hierarchy combinations and ordering.
+        ///// </summary>
+        ///// <typeparam name="T">The type of object in the collection.</typeparam>
+        ///// <param name="collection">The collection of collections.</param>
+        ///// <returns></returns>
+        //internal static IEnumerable<IEnumerable<T>> PairwiseSpecial<T>(this IEnumerable<IEnumerable<T>> collection)
+        //{
+        //    int totalElements = collection.Count();
+        //    for (int i = 0; i < totalElements; i++)
+        //    {
+        //        var currentElement = collection.ElementAt(i);
+        //        yield return currentElement;
+        //        foreach (var collectionAgain in collection.Skip(i + 1))
+        //        {
+        //            if (!currentElement.First().Equals(collectionAgain.First()))
+        //            {
+        //                yield return currentElement.Concat(collectionAgain);
+        //            }
+        //        }
+        //    }
+        //}
+
+        ///// <summary>
+        ///// Builds a collection combining each element in <paramref name="collection"/> with each collection in <paramref name="collections"/>.
+        ///// </summary>
+        ///// <typeparam name="T">The type of object in the collection.</typeparam>
+        ///// <param name="collection">The collection to combine other collections to.</param>
+        ///// <param name="collections">The collections to be combined.</param>
+        ///// <returns></returns>
+        //internal static IEnumerable<IEnumerable<T>> Build<T>(this IEnumerable<T> collection, IEnumerable<IEnumerable<T>> collections)
+        //{
+        //    foreach (var item in collection)
+        //    {
+        //        yield return new[] { item };
+        //    }
+        //    foreach (var item in collection)
+        //    {
+        //        foreach (var coll in collections)
+        //        {
+        //            yield return new[] { item }.Concat(coll);
+        //        }
+        //    }
+        //}
+
+        ///// <summary>
+        ///// Determines if the collection contains more items then the specified amount.
+        ///// </summary>
+        ///// <typeparam name="TSource">The type of object in the collection.</typeparam>
+        ///// <param name="source">The collection.</param>
+        ///// <param name="num">The number to check if the collection is greater than.</param>
+        ///// <returns></returns>
+        //internal static bool CountGreaterThan<TSource>(this IEnumerable<TSource> source, int num)
+        //{
+        //    ICollection<TSource> collectionOfT = source as ICollection<TSource>;
+        //    if (collectionOfT != null) return collectionOfT.Count > num;
+
+        //    ICollection collection = source as ICollection;
+        //    if (collection != null) return collection.Count > num;
+
+        //    int count = 0;
+        //    using (IEnumerator<TSource> e = source.GetEnumerator())
+        //    {
+        //        checked
+        //        {
+        //            while (e.MoveNext()) count++;
+        //            if (count > num) return true;
+        //        }
+        //    }
+        //    return false;
+        //}
+
     }
 }

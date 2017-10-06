@@ -75,6 +75,11 @@
             The associated children in relation to the <see cref="P:Capoala.CmdLine.ICommandLineGrouping.ParentCallChain"/>.
             </summary>
         </member>
+        <member name="P:Capoala.CmdLine.ICommandLineGrouping.Description">
+            <summary>
+            A description of what this grouping represents or does within the scope of the application.
+            </summary>
+        </member>
         <member name="T:Capoala.CmdLine.ICommandLineRestriction`1">
             <summary>
             Represents a command line restriction.
@@ -95,6 +100,21 @@
             Returns a collection of <typeparamref name="T"/> representing the violations, if any violations where found.
             Returns an empty collection if no violations were found.
             </returns>
+        </member>
+        <member name="T:Capoala.CmdLine.CmdLineSearchCriteria">
+            <summary>
+            Defines how a command line call-chain is found.
+            </summary>
+        </member>
+        <member name="F:Capoala.CmdLine.CmdLineSearchCriteria.Precise">
+            <summary>
+            All arguments of the call-chain must be found.
+            </summary>
+        </member>
+        <member name="F:Capoala.CmdLine.CmdLineSearchCriteria.IgnoreChildren">
+            <summary>
+            Ignore children in the search.
+            </summary>
         </member>
         <member name="T:Capoala.CmdLine.CommandLineViolation">
             <summary>
@@ -178,22 +198,24 @@
             </para>
             </summary>
         </member>
-        <member name="M:Capoala.CmdLine.CommandLineGrouping.#ctor(Capoala.CmdLine.ICommandLineArgument,Capoala.CmdLine.ICommandLineArgument[])">
+        <member name="M:Capoala.CmdLine.CommandLineGrouping.#ctor(Capoala.CmdLine.ICommandLineArgument,Capoala.CmdLine.ICommandLineArgument[],System.String)">
             <summary>
             Creates new instance of <see cref="T:Capoala.CmdLine.CommandLineGrouping"/>.
             </summary>
             <param name="parentCallChain">The parent call-chain.</param>
             <param name="children">The associated children in relation to <paramref name="parentCallChain"/>.</param>
+            <param name="description">A description of what this grouping represents or does within the scope of the application.</param>
             <exception cref="T:System.ArgumentNullException">
             Throws when <paramref name="parentCallChain"/> is null or contains not elements.
             </exception>
         </member>
-        <member name="M:Capoala.CmdLine.CommandLineGrouping.#ctor(Capoala.CmdLine.ICommandLineArgument[],Capoala.CmdLine.ICommandLineArgument[])">
+        <member name="M:Capoala.CmdLine.CommandLineGrouping.#ctor(Capoala.CmdLine.ICommandLineArgument[],Capoala.CmdLine.ICommandLineArgument[],System.String)">
             <summary>
             Creates new instance of <see cref="T:Capoala.CmdLine.CommandLineGrouping"/>.
             </summary>
             <param name="parentCallChain">The parent call-chain.</param>
             <param name="children">The associated children in relation to <paramref name="parentCallChain"/>.</param>
+            <param name="description">A description of what this grouping represents or does within the scope of the application.</param>
             <exception cref="T:System.ArgumentNullException">
             Throws when <paramref name="parentCallChain"/> is null or contains not elements.
             </exception>
@@ -248,12 +270,6 @@
             Returns the <see cref="T:Capoala.CmdLine.ICommandLineSpecification"/> with the lowest <see cref="P:Capoala.CmdLine.ICommandLineSpecification.Hierarchy"/> 
             from the <see cref="P:Capoala.CmdLine.CommandLine.KnownSpecifications"/> collection.
             </summary>
-        </member>
-        <member name="P:Capoala.CmdLine.CommandLine.AllPossibleCombinations">
-            <summary>
-            Returns a listing of all possible command line combinations.
-            </summary>
-            <returns></returns>
         </member>
         <member name="M:Capoala.CmdLine.CommandLine.GetSegment(Capoala.CmdLine.ICommandLineArgument,System.Collections.Generic.IEnumerable{System.String})">
             <summary>
@@ -401,24 +417,12 @@
             Returns true if the call-chain is present; otherwise, returns false.
             </returns>
         </member>
-        <member name="M:Capoala.CmdLine.CommandLine.FoundIgnoreingChildren(Capoala.CmdLine.ICommandLineArgument[])">
-            <summary>
-            Determines if the specified call-chain is present in the <see cref="P:Capoala.CmdLine.CommandLine.Arguments"/> collection.
-            <para>
-            This overload ignores proceeding, children arguments in the evaluation.
-            </para>
-            </summary>
-            <param name="callChain">The call-chain to check.</param>
-            <returns>
-            Returns true if the call-chain is present; otherwise, returns false.
-            </returns>
-        </member>
-        <member name="M:Capoala.CmdLine.CommandLine.Found(System.Collections.Generic.IEnumerable{Capoala.CmdLine.ICommandLineArgument},System.Boolean,System.Collections.Generic.IEnumerable{System.String})">
+        <member name="M:Capoala.CmdLine.CommandLine.Found(System.Collections.Generic.IEnumerable{Capoala.CmdLine.ICommandLineArgument},Capoala.CmdLine.CmdLineSearchCriteria,System.Collections.Generic.IEnumerable{System.String})">
             <summary>
             Determines if the specified call-chain is present in the specified collection.
             </summary>
             <param name="callChain">The call-chain to check.</param>
-            <param name="ignoreChildren">Determines whether children proceeding <paramref name="callChain"/> should be included as part of the match.</param>
+            <param name="criteria">Determines whether children proceeding <paramref name="callChain"/> should be included as part of the match.</param>
             <param name="collectionToSearch">
             The collection to search. 
             Specifying null will default to <see cref="P:Capoala.CmdLine.CommandLine.Arguments"/>.
@@ -439,15 +443,6 @@
             <returns>
             Returns true if the call-chain is present; otherwise, returns false.
             </returns>
-        </member>
-        <member name="M:Capoala.CmdLine.CommandLine.GetAllCombinationsRecursiveBase(System.Int32,System.Int32,Capoala.CmdLine.ICommandLineArgument[])">
-            <summary>
-            A recursive method which returns a listing of all possible command line combinations.
-            </summary>
-            <param name="previous">The previous hierarchical number.</param>
-            <param name="max">The maximum number of types of command line arguments.</param>
-            <param name="callHierarchy">The call hierarchy - parent to child relationship - where the first, left, is represented as a parent to the proceeding argument.</param>
-            <returns></returns>
         </member>
         <member name="T:Capoala.CmdLine.CommandLine.BaseImplementations">
             <summary>
@@ -637,7 +632,12 @@
             The associated children in relation to <see cref="P:Capoala.CmdLine.CommandLine.BaseImplementations.CommandLineGroupingBase.ParentCallChain"/>.
             </summary>
         </member>
-        <member name="M:Capoala.CmdLine.CommandLine.BaseImplementations.CommandLineGroupingBase.#ctor(Capoala.CmdLine.ICommandLineArgument,Capoala.CmdLine.ICommandLineArgument[])">
+        <member name="P:Capoala.CmdLine.CommandLine.BaseImplementations.CommandLineGroupingBase.Description">
+            <summary>
+            A description of what this grouping represents or does within the scope of the application.
+            </summary>
+        </member>
+        <member name="M:Capoala.CmdLine.CommandLine.BaseImplementations.CommandLineGroupingBase.#ctor(Capoala.CmdLine.ICommandLineArgument,Capoala.CmdLine.ICommandLineArgument[],System.String)">
             <summary>
             Creates new instance of <see cref="T:Capoala.CmdLine.CommandLine.BaseImplementations.CommandLineGroupingBase"/>.
             <para>
@@ -646,6 +646,7 @@
             </summary>
             <param name="parentCallChain">The parent call-chain.</param>
             <param name="children">The associated children in relation to <paramref name="parentCallChain"/>.</param>
+            <param name="description">A description of what this grouping represents or does within the scope of the application.</param>
             <exception cref="T:System.ArgumentNullException">
             Throws when <paramref name="parentCallChain"/> is null or contains not elements.
             </exception>
@@ -661,7 +662,7 @@
             then you would create two groupings; one with "childOne" and "childTwo"; the other, with "childOne", "childTwo", and "childThree".
             </remarks>
         </member>
-        <member name="M:Capoala.CmdLine.CommandLine.BaseImplementations.CommandLineGroupingBase.#ctor(Capoala.CmdLine.ICommandLineArgument[],Capoala.CmdLine.ICommandLineArgument[])">
+        <member name="M:Capoala.CmdLine.CommandLine.BaseImplementations.CommandLineGroupingBase.#ctor(Capoala.CmdLine.ICommandLineArgument[],Capoala.CmdLine.ICommandLineArgument[],System.String)">
             <summary>
             Creates new instance of <see cref="T:Capoala.CmdLine.CommandLine.BaseImplementations.CommandLineGroupingBase"/>.
             <para>
@@ -670,6 +671,7 @@
             </summary>
             <param name="parentCallChain">The parent call-chain.</param>
             <param name="children">The associated children in relation to <paramref name="parentCallChain"/>.</param>
+            <param name="description">A description of what this grouping represents or does within the scope of the application.</param>
             <exception cref="T:System.ArgumentNullException">
             Throws when <paramref name="parentCallChain"/> is null or contains not elements.
             </exception>
