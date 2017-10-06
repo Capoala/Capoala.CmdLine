@@ -491,29 +491,30 @@ namespace Capoala.CmdLine
             {
                 var commands = callChain.Select(icla => icla.Command);
                 int countOfRoot = collectionToSearch.Count(str => callChain.First().Command.Equals(str, Comparer));
-
+                if (countOfRoot == 0) return false;
                 if (criteria == CmdLineSearchCriteria.IgnoreChildren)
                 {
-                    bool mismatch = false;
-                    for (int i = 0; i < countOfRoot; i++)
-                    {
-                        var segment = callChain.First().GetSegment(collectionToSearch);
+                    return callChain.GetSegment(collectionToSearch).Any();
+                    //bool mismatch = false;
+                    //for (int i = 0; i < countOfRoot; i++)
+                    //{
+                    //    var segment = callChain.First().GetSegment(collectionToSearch);
 
-                        if (commands.Count() < segment.Count())
-                        {
-                            for (int cmd = 0; cmd < commands.Count(); cmd++)
-                            {
-                                if (!commands.ElementAt(cmd).Equals(segment.ElementAt(cmd), Comparer))
-                                {
-                                    mismatch = true;
-                                    break;
-                                }
-                            }
-                            if (mismatch)
-                                collectionToSearch = collectionToSearch.ExcludeSubset(segment);
-                        }
-                    }
-                    return !mismatch;
+                    //    if (commands.Count() < segment.Count())
+                    //    {
+                    //        for (int cmd = 0; cmd < commands.Count(); cmd++)
+                    //        {
+                    //            if (!commands.ElementAt(cmd).Equals(segment.ElementAt(cmd), Comparer))
+                    //            {
+                    //                mismatch = true;
+                    //                break;
+                    //            }
+                    //        }
+                    //        if (mismatch)
+                    //            collectionToSearch = collectionToSearch.ExcludeSubset(segment);
+                    //    }
+                    //}
+                    //return !mismatch;
                 }
                 else
                 {
@@ -543,7 +544,7 @@ namespace Capoala.CmdLine
         /// Returns true if the call-chain is present; otherwise, returns false.
         /// </returns>
         public static bool Found(this ICommandLineGrouping grouping, IEnumerable<string> collectionToSearch = null)
-            => grouping.ParentCallChain.Concat(grouping.Children).Found( CmdLineSearchCriteria.Precise, collectionToSearch);
+            => grouping.ParentCallChain.Concat(grouping.Children).Found(CmdLineSearchCriteria.Precise, collectionToSearch);
 
         // TODO: Implement
         ///// <summary>
@@ -1299,6 +1300,57 @@ namespace Capoala.CmdLine
 
             if (secondSequence?.Any() ?? false)
             {
+                if (secondSequence.Count() <= firstSequence.Count())
+                {
+                    int indexOfFirstMatch = firstSequence.ToList().IndexOf(secondSequence.FirstOrDefault());
+
+                    if (indexOfFirstMatch != -1)
+                    {
+                        IEnumerable<T> remaining = firstSequence.Skip(indexOfFirstMatch);
+
+                        if (remaining.Any())
+                        {
+                            bool mismatchFound = false;
+                            for (int i = 0; i < secondSequence.Count(); i++)
+                            {
+                                T sourceCurrentElement = firstSequence.ElementAt(indexOfFirstMatch + i);
+                                T subsetCurrentElement = secondSequence.ElementAt(i);
+
+                                if (!sourceCurrentElement.Equals(subsetCurrentElement))
+                                {
+                                    mismatchFound = true;
+                                    break;
+                                }
+                            }
+
+                            if (mismatchFound)
+                                return firstSequence;
+                            else
+                            {
+                                if (indexOfFirstMatch > 0)
+                                    return firstSequence.Take(indexOfFirstMatch).Skip(secondSequence.Count());
+                                else
+                                    return firstSequence.Skip(secondSequence.Count());
+                            }
+                        }
+                    }
+                }
+            }
+            return firstSequence;
+        }
+
+        internal static IEnumerable<T> GetSubset<T>(this IEnumerable<T> firstSequence, IEnumerable<T> secondSequence)
+        {
+            if (firstSequence == null)
+                throw new ArgumentNullException("sourceCollection");
+
+            if (secondSequence.Count() > firstSequence.Count())
+                return Enumerable.Empty<T>();
+
+            if (secondSequence?.Any() ?? false)
+            {
+                if (firstSequence.ExcludeSubset(secondSequence).Count() == firstSequence.Count()) return Enumerable.Empty<T>();
+
                 if (secondSequence.Count() <= firstSequence.Count())
                 {
                     int indexOfFirstMatch = firstSequence.ToList().IndexOf(secondSequence.FirstOrDefault());

@@ -4,7 +4,7 @@
     <TargetFrameworks>netstandard2.0;netstandard1.6;netstandard1.5;netcoreapp2.0;netcoreapp1.1;netcoreapp1.0;net47;net462</TargetFrameworks>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-    <Version>2017.2.0.5</Version>
+    <Version>2017.2.0.8</Version>
     <Authors>Jonathan Nash</Authors>
     <Company />
     <Description>A cross-platform command line management framework.</Description>
@@ -16,8 +16,8 @@ API Change: CommandLine.FoundIgnoringChildren has been replaced by CommandLine.F
 
 Minor code cleaning and performance improvment.
 </PackageReleaseNotes>
-    <AssemblyVersion>2017.2.0.5</AssemblyVersion>
-    <FileVersion>2017.2.0.5</FileVersion>
+    <AssemblyVersion>2017.2.0.8</AssemblyVersion>
+    <FileVersion>2017.2.0.8</FileVersion>
     <PackageProjectUrl>https://capoala.github.io/Capoala.CmdLine/</PackageProjectUrl>
     <PackageIconUrl></PackageIconUrl>
     <PackageLicenseUrl>https://github.com/Capoala/Capoala.CmdLine/blob/master/LICENSE</PackageLicenseUrl>
