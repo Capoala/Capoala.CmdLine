@@ -4,13 +4,13 @@
     <TargetFrameworks>netstandard2.0;netstandard1.6;netstandard1.5;netcoreapp2.0;netcoreapp1.1;netcoreapp1.0;net47;net462</TargetFrameworks>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>2018.1.0.6</Version>
+    <Version>2018.1.0.7</Version>
     <Authors>Jonathan Nash</Authors>
     <Company />
     <Description>A cross-platform command line management system.</Description>
     <Copyright>Copyright Jonathan Nash</Copyright>
     <PackageTags>capoala nash commandline command line parser command-line command-line-parser commandlineparser cmdline cmdlineparser argument argumentparser</PackageTags>
-    <PackageReleaseNotes>Release: 2018.1.0.6
+    <PackageReleaseNotes>Release: 2018.1.0.7
 
 API Changes:
   - Removing the nesting requirement for base class implementations.
@@ -27,8 +27,8 @@ New Features:
 Other Notes:
   - Re-Structure of code-base.
     </PackageReleaseNotes>
-    <AssemblyVersion>2018.1.0.6</AssemblyVersion>
-    <FileVersion>2018.1.0.6</FileVersion>
+    <AssemblyVersion>2018.1.0.7</AssemblyVersion>
+    <FileVersion>2018.1.0.7</FileVersion>
     <PackageProjectUrl>https://capoala.github.io/Capoala.CmdLine/</PackageProjectUrl>
     <PackageIconUrl></PackageIconUrl>
     <PackageLicenseUrl>https://github.com/Capoala/Capoala.CmdLine/blob/master/LICENSE</PackageLicenseUrl>

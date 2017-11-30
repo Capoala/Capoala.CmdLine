@@ -1,5 +1,6 @@
 ﻿using Capoala.CmdLine;
 using System;
+using System.Linq;
 
 namespace Core_Console_Test
 {
@@ -22,7 +23,7 @@ namespace Core_Console_Test
             var argNine = new CommandLineArgument("nine", specThree);
 
             var groupingOne = new CommandLineGrouping(argOne, new[] { argFour });
-            var groupingTwo = new CommandLineGrouping(new[] {argOne, argFour }, new[] { argNine });
+            var groupingTwo = new CommandLineGrouping(new[] {argOne, argFour }, new[] { argEight, argNine });
 
             var flags = new []
             {
@@ -57,7 +58,11 @@ namespace Core_Console_Test
             Console.WriteLine();
             Console.WriteLine($"{argOne.Command} => {string.Join(" | ", argOne.GetParams())}");
             Console.WriteLine($"{argOne.Command} => {string.Join(" | ", new[] { argOne, argFour }.GetParams())}");
-            Console.WriteLine($"{argOne.Command} => {string.Join(" | ", new[] { argOne, argFour, argNine }.GetParams())}");
+            Console.WriteLine($"{argOne.Command} => {string.Join(" | ", new[] { argOne, argFour, argNine }.GetParams())}");            
+
+            Console.WriteLine();
+
+            CommandLine.GetParams(new[] { argOne, argFour }).First();
 
             Console.WriteLine();
 
@@ -65,7 +70,7 @@ namespace Core_Console_Test
             {
                 new CommandLineRestrictions.FirstArgMustBeRootRestriction(CommandLine.RootSpecification),
                 new CommandLineRestrictions.UnknownArgumentsRestriction(CommandLine.KnownArguments, CommandLine.KnownSpecifications),
-                new CommandLineRestrictions.MustContainAtLeastOneArgumentRestriction()
+                new CommandLineRestrictions.MustContainAtLeastOneArgumentRestriction(),                
             })
                 if (violation.IsViolated)
                     foreach (var violationResult in violation.GetViolations())

@@ -129,32 +129,6 @@ namespace Capoala.CmdLine
                     workingSegment = cmdLineArg.GetSegment(workingComparer, workingSegment);
             return workingSegment;
         }
-
-        /// <summary>
-        /// Returns a collection of child arguments and parameters of the given grouping.
-        /// </summary>
-        /// <param name="grouping">The grouping.</param>
-        /// <param name="comparer">The comparer to use when determining if a match was found.</param>
-        /// <param name="argumentsToParse">
-        /// The collection to search. 
-        /// Specifying null will default to <see cref="Arguments"/>.
-        /// </param>
-        /// <returns>
-        /// Returns all child <see cref="ICommandLineArgument.Command"/> and parameters based upon the 
-        /// <see cref="ICommandLineSpecification"/> if <paramref name="grouping"/> is found.
-        /// Returns an empty collection if <paramref name="grouping"/> is not found.
-        /// </returns>
-        /// <remarks>
-        /// This method searches <paramref name="argumentsToParse"/> for a value that matches <paramref name="grouping"/> 
-        /// using the <see cref="Comparer"/> value.
-        /// Once found, that value and all proceeding values are returned until a value whose first character matches that 
-        /// of the <paramref name="grouping"/>'s last argument's delimiter.
-        /// 
-        /// If <paramref name="argumentsToParse"/> is null, <see cref="Arguments"/> is used.
-        /// 
-        /// If no matches to <paramref name="grouping"/> are found, an empty collection is returned.
-        /// </remarks>
-        public static IEnumerable<string> GetSegment(this ICommandLineGrouping grouping, StringComparison? comparer = null, IEnumerable<string> argumentsToParse = null) => grouping.ParentCallChain.Concat(grouping.Children).GetSegment(comparer, argumentsToParse);
         #endregion
 
         #region GetParams
@@ -195,24 +169,6 @@ namespace Capoala.CmdLine
         /// </returns>
         public static IEnumerable<string> GetParams(this IEnumerable<ICommandLineArgument> callChain, StringComparison? comparer = null, IEnumerable<string> argumentsToParse = null)
             => callChain.LastOrDefault().GetParams(comparer, callChain.GetSegment(comparer, argumentsToParse));
-
-        /// <summary>
-        /// Returns all parameters associated with the specified grouping.
-        /// </summary>
-        /// <param name="grouping">The grouping to retrieve the parameters of.</param>
-        /// <param name="comparer">The comparer to use when determining if a match was found.</param>
-        /// <param name="argumentsToParse">
-        /// The collection to search. 
-        /// Specifying null will default to <see cref="Arguments"/>.
-        /// </param>
-        /// <returns>
-        /// Searches <paramref name="argumentsToParse"/> for <paramref name="grouping"/>. 
-        /// Once found, proceeding values are returned until a value begins with a known <see cref="ICommandLineSpecification.Delimiter"/>.
-        /// 
-        /// If <paramref name="grouping"/> is not found, or no parameters are found, an empty collection is returned.
-        /// </returns>
-        public static IEnumerable<string> GetParams(this ICommandLineGrouping grouping, StringComparison? comparer = null, IEnumerable<string> argumentsToParse = null) 
-            => grouping.ParentCallChain.Concat(grouping.Children).GetParams(comparer, argumentsToParse);
         #endregion
 
         #region ExcludeParams
