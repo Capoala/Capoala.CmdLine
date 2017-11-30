@@ -3,29 +3,44 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;netstandard1.6;netstandard1.5;netcoreapp2.0;netcoreapp1.1;netcoreapp1.0;net47;net462</TargetFrameworks>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-    <Version>2017.2.0.8</Version>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Version>2018.1.0.5</Version>
     <Authors>Jonathan Nash</Authors>
     <Company />
-    <Description>A cross-platform command line management framework.</Description>
-    <Copyright>Copyright 2017 Jonathan Nash</Copyright>
+    <Description>A cross-platform command line management system.</Description>
+    <Copyright>Copyright Jonathan Nash</Copyright>
     <PackageTags>capoala nash commandline command line parser command-line command-line-parser commandlineparser cmdline cmdlineparser argument argumentparser</PackageTags>
-    <PackageReleaseNotes>Bug Fix: Corrected issue where CommandLine.FoundIgnoringChildren() returned false positives.
+    <PackageReleaseNotes>Release: 2018.1.0.5
 
-API Change: CommandLine.FoundIgnoringChildren has been replaced by CommandLine.Found().
+API Changes:
+  - Removing the nesting requirement for base class implementations.
+  - Improved parsing with new CmdLineSearchOptions flags.
+  - Additional default restrictions and implementations.
 
-Minor code cleaning and performance improvment.
-</PackageReleaseNotes>
-    <AssemblyVersion>2017.2.0.8</AssemblyVersion>
-    <FileVersion>2017.2.0.8</FileVersion>
+Bug Fixes:
+  - Parsing accuracy implemented with new CmdLineSearchOptions flags.
+  - Nuget package now includes the xml documentation files for all framework versions.
+
+New Features:
+  - New CmdLineSearchOptions flags used for evaluating if an argument is found.
+
+Other Notes:
+  - Re-Structure of code-base.
+    </PackageReleaseNotes>
+    <AssemblyVersion>2018.1.0.5</AssemblyVersion>
+    <FileVersion>2018.1.0.5</FileVersion>
     <PackageProjectUrl>https://capoala.github.io/Capoala.CmdLine/</PackageProjectUrl>
     <PackageIconUrl></PackageIconUrl>
     <PackageLicenseUrl>https://github.com/Capoala/Capoala.CmdLine/blob/master/LICENSE</PackageLicenseUrl>
-    <RepositoryUrl>https://github.com/Capoala/Capoala.CmdLine</RepositoryUrl>
+    <RepositoryUrl></RepositoryUrl>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DocumentationFile>bin\Release\netstandard2.0\Capoala.CmdLine.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
+    <DocumentationFile>bin\Debug\netstandard2.0\Capoala.CmdLine.xml</DocumentationFile>
   </PropertyGroup>
 
 </Project>
