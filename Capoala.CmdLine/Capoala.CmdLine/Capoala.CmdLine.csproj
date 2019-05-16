@@ -1,46 +1,33 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netstandard1.6;netstandard1.5;netcoreapp2.0;netcoreapp1.1;netcoreapp1.0;net47;net462</TargetFrameworks>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>2018.1.0.7</Version>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <Version>2019.0.0</Version>
+    <AssemblyVersion>2019.0.0</AssemblyVersion>
+    <FileVersion>2019.0.0</FileVersion>
     <Authors>Jonathan Nash</Authors>
     <Company />
-    <Description>A cross-platform command line management system.</Description>
-    <Copyright>Copyright Jonathan Nash</Copyright>
-    <PackageTags>capoala nash commandline command line parser command-line command-line-parser commandlineparser cmdline cmdlineparser argument argumentparser</PackageTags>
-    <PackageReleaseNotes>Release: 2018.1.0.7
+    <Description>A cross-platform command line management framework.</Description>
+    <Copyright />
+    <PackageTags />
+    <PackageReleaseNotes />
 
-API Changes:
-  - Removing the nesting requirement for base class implementations.
-  - Improved parsing with new CmdLineSearchOptions flags.
-  - Additional default restrictions and implementations.
-
-Bug Fixes:
-  - Parsing accuracy implemented with new CmdLineSearchOptions flags.
-  - Nuget package now includes the xml documentation files for all framework versions.
-
-New Features:
-  - New CmdLineSearchOptions flags used for evaluating if an argument is found.
-
-Other Notes:
-  - Re-Structure of code-base.
-    </PackageReleaseNotes>
-    <AssemblyVersion>2018.1.0.7</AssemblyVersion>
-    <FileVersion>2018.1.0.7</FileVersion>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <IncludeSymbols>true</IncludeSymbols>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    
     <PackageProjectUrl>https://capoala.github.io/Capoala.CmdLine/</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Capoala/Capoala.MVVM</RepositoryUrl>
     <PackageIconUrl></PackageIconUrl>
-    <PackageLicenseUrl>https://github.com/Capoala/Capoala.CmdLine/blob/master/LICENSE</PackageLicenseUrl>
-    <RepositoryUrl></RepositoryUrl>
-  </PropertyGroup>
+    
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>Capoala.pfx</AssemblyOriginatorKeyFile>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\netstandard2.0\Capoala.CmdLine.xml</DocumentationFile>
   </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
-    <DocumentationFile>bin\Debug\netstandard2.0\Capoala.CmdLine.xml</DocumentationFile>
-  </PropertyGroup>
-
+  
 </Project>
