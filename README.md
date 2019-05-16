@@ -1,12 +1,12 @@
 # Capoala.CmdLine 2018
 
-Capoala.CmdLine is a sophisticated command line library that allows developers to quickly define, evaluate, and manage the command line. The best part? Capoala.CmdLine is built upon the .NET Standard, so enjoy the freedom of cross-platform development!
+Capoala.CmdLine is a command line library that allows developers to quickly define, evaluate, and manage the command line.  Capoala.CmdLine is built upon the .NET Standard for cross-platform development.
 
 ## Defining a specification. 
 
 The `ICommandLineSpecification` interface defines the characteristics of a command line argument, such as its delimiter and hierarchal order.
 
-The following sample demenstrates how to create a new specification, where `TierOneSpec` represents a parent, and `TierTwoSpec` a child - or decorator - to further define optional parameters.
+The following sample demonstrates how to create a new specification, where `TierOneSpec` represents a parent, and `TierTwoSpec` a child - or decorator - to further define optional parameters.
 
 ```csharp
 ICommandLineSpecification TierOneSpec = new CommandLineSpecification(0, "--");
@@ -17,7 +17,7 @@ ICommandLineSpecification TierTwoSpec = new CommandLineSpecification(1, "-");
 
 The `ICommandLineArgument` interface defines the actual command line argument. Additionally, you can also provide a description of the intention of the command in order to auto-generate a usage doc. (Auto-generated usage doc is currently in the works, but not yet implemented).
  
-The following sample demenstrates how to create a new argument using the above specifications.
+The following sample demonstrates how to create a new argument using the above specifications.
 
 ```csharp
 ICommandLineArgument Convert 
@@ -48,13 +48,13 @@ ICommandLineGrouping ConvertGroup = new CommandLineGrouping(
 
 ## Defining rules and restrictions.
 
-The `ICommandLineRestriction<T>` interface provides an easy way to create re-usable restrictions and rule-sets. Built direclty into the framework are common, default restrictions that provide a quick and clear way of defining these rules.
+The `ICommandLineRestriction<T>` interface provides an easy way to create re-usable restrictions and rule-sets. Built directly into the framework are common, default restrictions that provide a quick and clear way of defining these rules.
 
 The following example shows how to:
 
 1. Enforce that unknown arguments are not allowed.
 2. Ensure that at least one argument be supplied.
-3. Ensure that both `InFilePath` and `OutFilePath` have one paramter.
+3. Ensure that both `InFilePath` and `OutFilePath` have one parameter.
 
 ```csharp
 ICommandLineRestriction<CommandLineViolation> NoUnknownArgs 
@@ -66,10 +66,10 @@ ICommandLineRestriction<CommandLineViolation> AtLeastOneArg
 	= new CommandLineRestrictions.MustContainAtLeastOneArgumentRestriction();
 
 ICommandLineRestriction<CommandLineViolation> InParam 
-	new CommandLineRestrictions.ParameterCountRestriction(1,1, InFilePath)
+	= new CommandLineRestrictions.ParameterCountRestriction(1, 1, InFilePath)
 
 ICommandLineRestriction<CommandLineViolation> OutParam 	
-	new CommandLineRestrictions.ParameterCountRestriction(1,1, OutFilePath)
+	= new CommandLineRestrictions.ParameterCountRestriction(1, 1, OutFilePath)
     
 foreach (var restriction in new ICommandLineRestriction<CommandLineViolation>[] 
 {
@@ -102,7 +102,7 @@ The above example is a very short, concise example on how one would implement a 
 > $ FileConverter.exe --convert -in "C:\test\inFile.txt" -out "C:\test\class.cs"
 
 
-## What's a "call-chain", and how do we evaluate and retreive data from the command line?
+## What's a "call-chain", and how do we evaluate and retrieve data from the command line?
 
 A call-chain refers to the chain of arguments that make up a parent call hierarchy. Typically, we only make use of one or two levels of arguments, such as the previous example; however, what if what we are converting is a text file into an auto-generated .cs (class) file? What if we would like to determine how that class file is built? (e.g. StringBuilder, string[], List<string>, etc.);
 
@@ -164,7 +164,7 @@ And now, we can do something like this!
 > $ FileConverter.exe --convert -in "C:\test\inFile.txt" -out "C:\test\class.cs" :stringbuilder :array
 
 
-By changing the `InFilePathParam` and `OutFilePathParam` to be associated with `OutTypeStringBuilder` and `OutTypeArray`, we could then change where the paramter data is stored.
+By changing the `InFilePathParam` and `OutFilePathParam` to be associated with `OutTypeStringBuilder` and `OutTypeArray`, we could then change where the parameter data is stored.
 
 > $ FileConverter.exe --convert -in "C:\test\inFile.txt" -out :stringbuilder "C:\test\sb.cs" :array "C:\test\array.cs"
 
